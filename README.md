@@ -185,7 +185,7 @@ This section is removed, as it is handled by EKS-A installation
 
 ### 3.3.4. Kubernetes plugins installation
 
-Except for kubernetes and docker, below plugin is required:
+Blow plugins are required:
 
 - multus:
   - follow multus GitHub - <https://github.com/intel/multus-cni>
