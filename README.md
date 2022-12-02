@@ -54,6 +54,10 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 ## 3.3. Prequisition
 
+### 3.3.0. EKS-A install with Generic Ubuntu OS
+
+This is not in the scope of this document. Will be covered separately.
+
 ### 3.3.0. RT kernel install
 
 Follow this article to install the RT kernel for Ubuntu 22.04, beta version: https://ubuntu.com/blog/real-time-ubuntu-released
@@ -177,111 +181,9 @@ $ cpupower idle-set -d 3
 $ cpupower idle-set -d 2
 ```
 
-### 3.3.3. Kubernetes and docker installation
+### 3.3.3. Kubernetes installation
 
-Make sure specific version of kubernetes and docker had been installed.
-Usally we use kubeadm install and initialize kubernetes, please follow the steps listed in below link:  
-<https://kubernetes.io/docs/setup/production-environment/tools/kubeadm/create-cluster-kubeadm/>
-#### 3.3.3.1. Configure operating system
-- turn off swap 
-  ```shell
-  $ swapoff -a
-  ```
-#### 3.3.3.1. Install docker
-  ```shell
-  $ apt-get install -y ca-certificates curl gnupg lsb-release
-  $ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-  $ echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-  $ apt-get update -y
-  $ apt-get install -y docker-ce=5:20.10.13~3-0~ubuntu-jammy docker-ce-cli=5:20.10.13~3-0~ubuntu-jammy containerd.io
-  $ mkdir /etc/docker
-  $ cat > /etc/docker/daemon.json <<EOF
-  {
-    "exec-opts": ["native.cgroupdriver=systemd"],
-    "log-driver": "json-file",
-    "log-opts": {
-      "max-size": "100m"
-    },
-    "storage-driver": "overlay2",
-    "storage-opts": [
-      "overlay2.override_kernel_check=true"
-    ]
-  }
-  EOF
-  $ systemctl enable docker
-  $ systemctl daemon-reload
-  $ systemctl restart docker
-  ```
-
-#### 3.3.3.1. Install kubernetes - thru kubeadm
-  Install kubernetes with below command: 
-  
-  ```shell
-  $ curl -fsSLo /usr/share/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
-  $ echo "deb [signed-by=/usr/share/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" \
-  | sudo tee /etc/apt/sources.list.d/kubernetes.list
-  $ apt update
-  $ apt install -y kubectl=1.21.2-00 kubeadm=1.21.2-00 kubelet=1.21.2-00 --allow-downgrades
-  $ systemctl enable --now kubelet
-  $ systemctl start kubelet
-  # Note: If it is the first time that you run this enable command and it reported "containerd.io: command not found" and
-  # "Failed to start kubele.service: Unit kubele.service not found", you need to execute from
-  # " apt install -y kubectl=1.21.2-00 kubeadm=1.21.2-00 kubelet=1.21.2-00 --allow-downgrades" once again, then it will work.
-  $ cat <<EOF > /etc/sysctl.d/k8s.conf
-  net.bridge.bridge-nf-call-ip6tables = 1
-  net.bridge.bridge-nf-call-iptables = 1
-  EOF
-  $ sysctl --system
-  ```
-  
-#### 3.3.3.1. configure docker and kubernetes to run behind proxy 
-
-  add below environmental variables to ~/bashrc file for proxy setting: 
-  
-  ```shell
-  $ export http_proxy=<proxy_url>
-  $ export https_proxy=<proxy_url>
-  $ export no_proxy=localhost,127.0.0.1,10.244.0.0/16,10.96.0.0/12,<host_ip>                                    
-  ```
-  configure proxy for docker: (add below setting to /etc/systemd/system/docker.service.d/http-proxy.conf)
-  
-  ```shell
-  [Service]
-  Environment="HTTP_PROXY=<proxy_url>"
-  [Service]
-  Environment="HTTPS_PROXY=<proxy_url>"
-  ```
-  reset docker 
-  
-  ```shell
-  $ systemctl daemon-reload
-  $ systemctl restart docker
-  ```
-  
-#### 3.3.3.1. kubernetes initialization
-  use below command to initialize kubernetes cluster (master node)
-  
-  ```shell
-  $ kubeadm init --kubernetes-version=v1.21.11 --pod-network-cidr=10.244.0.0/16 --apiserver-advertise-address=<host_ip> --token-ttl 0 --ignore-preflight-errors=SystemVerification
-  $ mkdir -p $HOME/.kube
-  $ sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
-  $ sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  $ export KUBECONFIG=/etc/kubernetes/admin.conf
-  ```
-  
-  join worker node to cluster
-  
-  ```shell
-  $ kubeadm join <master-ip>:<master-port> --token <token> --discovery-token-ca-cert-hash sha256:<hash>
-  ```
-  
-  if worker is the same server as master, ignore the above join procedure. and use below command on master to mitigate the taint 
-  
-  ```shell
-  $ kubectl taint nodes --all node-role.kubernetes.io/master-
-  ```
+This section is removed, as it is handled by EKS-A installation
 
 ### 3.3.4. Kubernetes plugins installation
 
