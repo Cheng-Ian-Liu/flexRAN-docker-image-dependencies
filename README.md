@@ -96,6 +96,12 @@ The other parameters of this set of best known configuration can be simply added
 ```shell
 GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 "
 ```
+Note: in the SMC lab system
+
+```shell
+GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll"
+```
+
 
 Apply the changes by update the grub configuration file.
 
@@ -110,6 +116,14 @@ Reboot the server, and check the kernel parameter, which should look like:
 $ cat /proc/cmdline
 BOOT_IMAGE=/vmlinuz-5.15.0-1009-realtime root=/dev/mapper/ubuntu--vg-ubuntu--lv ro intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 cgroup_disable=memory mce=off hugepagesz=1G hugepages=60 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,28 skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll
 ```
+
+Note: in the SMC lab system
+
+```shell
+root@eksa-du:/home/ec2-user# cat /proc/cmdline
+BOOT_IMAGE=/boot/vmlinuz-5.15.0-1025-realtime root=UUID=b18bef28-24eb-4b61-836a-61a75205358f ro intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll autoinstall ds=nocloud-net
+```
+
 
 ### 3.3.2. Configure the CPU Frequency and cstate
 
