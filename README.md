@@ -54,9 +54,7 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 ## 3.3. Prequisition
 
-### 3.3.0. EKS-A install with Generic Ubuntu OS
-
-This is not in the scope of this document. Will be covered separately.
+EKS-A install completed with Generic Ubuntu OS up and running
 
 ### 3.3.0. RT kernel install
 
