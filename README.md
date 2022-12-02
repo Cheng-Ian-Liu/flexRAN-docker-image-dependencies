@@ -40,6 +40,7 @@ If you are new entry users and just want to do a quick try, please follow below 
 ## 3.2. SW list
 
 |             |                  Intel FlexRAN Reference                                   |                Lab Testing                      |
+| :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
 |  Category   |        Components        |                     Details                     |             Components Details                  |
 | :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
 |  Firmware   |           IFWI           |    Includes BIOS, BMC, ME as well as FRUSDR.    |  Dell/Supermicro BIOS/BMC settings (to be add)  |          
