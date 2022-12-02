@@ -190,22 +190,124 @@ Obtain the kubeconfig file of the target cluster, and execute the commands below
 Blow plugins are required:
 
 - multus:
-  - follow multus GitHub - <https://github.com/intel/multus-cni>
-  below is the command for installation:
-  ```shell
-  $ cd /root
-  $ git clone https://github.com/intel/multus-cni
-  $ cd /root/multus-cni/images
-  $ git checkout v3.3
-  $ kubectl create -f multus-daemonset.yml
-  ```
-- calico:
-  - follow calico instruction on offical website -  <http://docs.projectcalico.org>
-  below is the command for installation: 
-  ```shell
-  $ wget https://docs.projectcalico.org/v3.18/manifests/calico.yaml --no-check-certificate
-  $ kubectl apply -f calico.yaml
-  ```
+
+Clone Multus CNI repo
+
+```
+git clone https://github.com/k8snetworkplumbingwg/multus-cni.git && cd multus-cni
+```
+
+Apply Multus daemonset (thick) to your EKS-A cluster
+
+```
+kubectl apply -f ./deployments/multus-daemonset-thick.yml
+```
+
+Verify that you have Multus pods running
+
+```
+kubectl get pods -A | grep -i multus
+```
+
+You can validate the multus plugin by spinning up a sample pod with 2nd interface via ipvlan or macvlan CNI.
+
+Change the interface name and IP address accordingly in the macvlan NAD example below, based on your environment
+
+```
+$cat macvlan-conf-cheng.yml
+apiVersion: "k8s.cni.cncf.io/v1"
+kind: NetworkAttachmentDefinition
+metadata:
+  name: macvlan-conf
+spec:
+  config: '{
+      "cniVersion": "0.3.0",
+      "type": "macvlan",
+      "master": "eno1",
+      "mode": "bridge",
+      "ipam": {
+        "type": "host-local",
+        "subnet": "172.17.1.0/24",
+        "rangeStart": "172.17.1.31",
+        "rangeEnd": "172.17.1.33",
+        "routes": [
+          { "dst": "0.0.0.0/0" }
+        ],
+        "gateway": "172.17.1.1"
+      }
+    }'    
+```
+Apply the NAD
+
+```
+kubectl apply -f macvlan-conf-cheng.yml
+
+kubectl get net-attach-def
+NAME           AGE
+macvlan-conf   81m
+```
+
+Create a sample pod
+
+```
+$ cat multus-macvlan-test-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: multus-macvlan-test-pod
+  annotations:
+    k8s.v1.cni.cncf.io/networks: macvlan-conf
+spec:  # specification of the pod's contents
+  restartPolicy: Never
+  containers:
+  - name: test-pod-2
+    image: "busybox"
+    command: ["top"]
+    stdin: true
+    tty: true
+```
+```
+$ kubectl apply -f multus-macvlan-test-pod.yaml
+pod/multus-macvlan-test-pod created
+
+$ kubectl get pod
+NAME                      READY   STATUS    RESTARTS   AGE
+multus-macvlan-test-pod   1/1     Running   0          6s
+```
+Get into the pod and verify there are two interfaces
+
+```
+$ kubectl exec -it multus-macvlan-test-pod sh
+/ #
+/ # ifconfig
+eth0      Link encap:Ethernet  HWaddr 1E:9A:44:9B:13:97
+          inet addr:192.168.0.188  Bcast:0.0.0.0  Mask:255.255.255.255
+          inet6 addr: fe80::1c9a:44ff:fe9b:1397/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:7 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:10 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:746 (746.0 B)  TX bytes:796 (796.0 B)
+
+lo        Link encap:Local Loopback
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
+          inet addr:172.17.1.33  Bcast:172.17.1.255  Mask:255.255.255.0
+          inet6 addr: fe80::10a8:12ff:fe95:f6a4/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:147 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:12 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0
+          RX bytes:13720 (13.3 KiB)  TX bytes:928 (928.0 B)
+```
+
 - SRIOV (cni and network device plugin):
   - follow SRIOV instruction on SRIOV GitHub - <https://github.com/intel/sriov-network-deviceplugin>.
   below is the command for installation:
