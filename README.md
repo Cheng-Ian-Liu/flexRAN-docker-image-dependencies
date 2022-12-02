@@ -50,6 +50,36 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 ## 3.3. Prequisition
 
+### 3.3.0. RT kernel install
+
+Follow this article to install the RT kernel for Ubuntu 22.04, beta version: https://ubuntu.com/blog/real-time-ubuntu-released
+
+To attach your personal machine to a Pro subscription, please run:
+
+```
+pro attach <free token> 
+```
+
+To enable the real-time beta kernel, run:
+
+```
+pro enable realtime-kernel --beta
+```
+
+Then reboot the server, and your kernel version should become RT kernal
+
+```
+root@eksa-du:/home/ec2-user# uname -ar
+Linux eksa-du 5.15.0-1025-realtime #28-Ubuntu SMP PREEMPT_RT Fri Oct 28 23:19:16 UTC 2022 x86_64 x86_64 x86_64 GNU/Linux
+```
+
+After the server is rebooted, install the following packages that will be used later when setting CPU core frequency
+
+```
+sudo apt install linux-tools-5.15.0-1025-realtime
+sudo apt install linux-cloud-tools-5.15.0-1025-realtime
+```
+
 ### 3.3.1. RT kernel configuration
 
 Install TuneD:
