@@ -185,6 +185,8 @@ This section is removed, as it is handled by EKS-A installation
 
 ### 3.3.4. Kubernetes plugins installation
 
+Obtain the kubeconfig file of the target cluster, and execute the commands below to install additional K8s plugins
+
 Blow plugins are required:
 
 - multus:
