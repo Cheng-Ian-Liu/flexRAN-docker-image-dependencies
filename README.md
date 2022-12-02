@@ -39,18 +39,18 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 ## 3.2. SW list
 
-
-|  Category   |        Components        |                     Details                     |
-| :---------: | :----------------------: | :---------------------------------------------: |
-|  Firmware   |           IFWI           |    Includes BIOS, BMC, ME as well as FRUSDR.    |
-|             |     Fortville XL710      |            8.20 0x8000a051 1.2879.0             |
-|     OS      |       Ubuntu 22.04       | Ubuntu Server 22.04 Realtime kernel 5.15.0-1009 |
-|   Drivers   |   i40e for x700 series   |      Use the version comes with rt-5.15.0       |
-| Cloudnative |        kubernetes        |                     1.22.1                      |
-|             |    Container runtime     |                  Docker 0.19.0                  |
-|   FlexRAN   |  FlexRAN 22.07 pacakge   |                      22.07                      |
-|  Toolchain  | Intel oneAPI Base Tookit |                  2022.1.2.146                   |
-|    DPDK     |       DPDK release       |                      22.11                      |
+|             |                  Intel FlexRAN Reference                                   |                Lab Testing                      |
+|  Category   |        Components        |                     Details                     |             Components Details                  |
+| :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
+|  Firmware   |           IFWI           |    Includes BIOS, BMC, ME as well as FRUSDR.    |  Dell/Supermicro BIOS/BMC settings (to be add)  |          
+|             |     Fortville XL710      |            8.20 0x8000a051 1.2879.0             |                  To be add                      |
+|     OS      |       Ubuntu 22.04       | Ubuntu Server 22.04 Realtime kernel 5.15.0-1009 |Ubuntu Server 22.04 Realtime kernel 5.15.0-1025  |
+|   Drivers   |   i40e for x700 series   |      Use the version comes with rt-5.15.0       |                  To be add                      |
+| Cloudnative |        kubernetes        |                     1.22.1                      |            v1.23.13-eks-6022eca (beta)          |
+|             |    Container runtime     |                  Docker 0.19.0                  |           containerd://1.5.9-0ubuntu3           |
+|   FlexRAN   |  FlexRAN 22.07 pacakge   |                      22.07                      |                     same                        |
+|  Toolchain  | Intel oneAPI Base Tookit |                  2022.1.2.146                   |                     same                        |
+|    DPDK     |       DPDK release       |                      22.11                      |                     same                        |  
 
 
 ## 3.3. Prequisition
