@@ -39,9 +39,7 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 ## 3.2. SW list
 
-|             |                  Intel FlexRAN Reference                                   |                Lab Testing                      |
-| :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
-|  Category   |        Components        |                     Details                     |             Components Details                  |
+|  Category   |        Components        |           Details (FlexRAN Reference)           |            Details (Lab Testing)                |
 | :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
 |  Firmware   |           IFWI           |    Includes BIOS, BMC, ME as well as FRUSDR.    |  Dell/Supermicro BIOS/BMC settings (to be add)  |          
 |             |     Fortville XL710      |            8.20 0x8000a051 1.2879.0             |                  To be add                      |
