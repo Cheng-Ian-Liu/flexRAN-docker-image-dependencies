@@ -1,3 +1,8 @@
+# 0. Background
+
+The purpose of this document is to summarize all the host-level and K8s-level configurations we made to the platform to support Intel FlexRAN on-boarding.
+The document is modified based on Intel Open Source FlexRAN installation guide (https://github.com/intel/flexRAN-docker-image-dependencies), based on specific changes tailored for our environment.
+
 # 1. FlexRAN™ software reference stack
 
 Intel provides a vRAN reference architecture in the form of the FlexRAN™ software reference stack,
@@ -21,16 +26,16 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 ## 3.1. HW list
 
-|   Category   |                                            Icelake – SP                                            |
-| :----------: | :------------------------------------------------------------------------------------------------: |
-|    Board     |                                  Intel Server Board M50CYP2SBSTD                                   |
-|     CPU      |                              1x Intel® Xeon® Gold 6338N CPU @2.20 GHz                              |
-|    Memory    |                                   8x16GB DDR4 3200 MHz (Samsung)                                   |
-|   Storage    |                                     960 Gb SSD M.2 SATA 6Gb/s                                      |
-|   Chassis    |                                   2 U Rackmount Server Enclosure                                   |
-|     NIC1     |                             1x Fortville NIC X722 Base-T(LoM to CPU-0)                             |
-|     NIC2     | 1× Fortville 40 Gbe Ethernet PCIe XL710-QDA2 Dual Port QSFP+<br>(PCIe Add-in-card direct to CPU-0) |
-| Baseband dev |      Mount Bryce Card (acc100) to CPU-0,<br> Optional, use software mode only if not present       |
+|   Category   |                                    Icelake – SP (Intel Reference)                                  |     Icelake – SP ( Lab Testing)   |
+| :----------: | :------------------------------------------------------------------------------------------------: | :-------------------------------: |
+|    Board     |                                  Intel Server Board M50CYP2SBSTD                                   |   Dell XR11/Supermicro Servers    |
+|     CPU      |                              1x Intel® Xeon® Gold 6338N CPU @2.20 GHz                              |              Same CPU             |
+|    Memory    |                                   8x16GB DDR4 3200 MHz (Samsung)                                   |           128GB RAM (SMC)         | 
+|   Storage    |                                     960 Gb SSD M.2 SATA 6Gb/s                                      |          960 GB NVMe (SMC)        |
+|   Chassis    |                                   2 U Rackmount Server Enclosure                                   |   Dell XR11/Supermicro Servers    |
+|     NIC1     |                             1x Fortville NIC X722 Base-T(LoM to CPU-0)                             |   Intel I350 (SMC)/               |
+|     NIC2     | 1× Fortville 40 Gbe Ethernet PCIe XL710-QDA2 Dual Port QSFP+<br>(PCIe Add-in-card direct to CPU-0) |   Intel X550T (SMC)/              |
+| Baseband dev |      Mount Bryce Card (acc100) to CPU-0,<br> Optional, use software mode only if not present       |   Mount Bryce Card (acc100)       |
 
 ## 3.2. SW list
 
