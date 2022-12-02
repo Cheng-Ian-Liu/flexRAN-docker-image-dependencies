@@ -66,10 +66,10 @@ Add following line to the end of this file
 echo "export tuned_params"
 ```
 
-Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-27, 29-55:
+Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores and 64vCores, exclude 0 and 32 as sibiling vCores for house keeping purpose)
 
 ```shell
-isolated_cores=1-27,29-55
+isolated_cores=1-31,33-63
 ```
 
 Edit /usr/lib/tuned/realtime/tuned.conf to add nohz and rcu related parameters:
@@ -88,13 +88,13 @@ Check tuned_params:
 
 ```shell
 $ grep tuned_params= /boot/grub/grub.cfg
-set tuned_params="skew_tick=1 isolcpus=1-27,29-55 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-27,29-55 rcu_nocbs=1-27,29-55 rcu_nocb_poll"
+set tuned_params="skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll"
 ```
 
 The other parameters of this set of best known configuration can be simply added in /etc/defaut/grub as below:
 
 ```shell
-GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,28 irqaffinity=0,28 "
+GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 "
 ```
 
 Apply the changes by update the grub configuration file.
@@ -108,7 +108,7 @@ Reboot the server, and check the kernel parameter, which should look like:
 
 ```shell
 $ cat /proc/cmdline
-BOOT_IMAGE=/vmlinuz-5.15.0-1009-realtime root=/dev/mapper/ubuntu--vg-ubuntu--lv ro intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 cgroup_disable=memory mce=off hugepagesz=1G hugepages=60 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,28 irqaffinity=0,28 skew_tick=1 isolcpus=1-27,29-55 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-27,29-55 rcu_nocbs=1-27,29-55 rcu_nocb_poll
+BOOT_IMAGE=/vmlinuz-5.15.0-1009-realtime root=/dev/mapper/ubuntu--vg-ubuntu--lv ro intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 cgroup_disable=memory mce=off hugepagesz=1G hugepages=60 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,28 skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll
 ```
 
 ### 3.3.2. Configure the CPU Frequency and cstate
