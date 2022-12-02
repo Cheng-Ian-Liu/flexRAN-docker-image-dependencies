@@ -42,9 +42,9 @@ If you are new entry users and just want to do a quick try, please follow below 
 |  Category   |        Components        |           Details (FlexRAN Reference)           |            Details (Lab Testing)                |
 | :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
 |  Firmware   |           IFWI           |    Includes BIOS, BMC, ME as well as FRUSDR.    |  Dell/Supermicro BIOS/BMC settings (to be add)  |          
-|             |     Fortville XL710      |            8.20 0x8000a051 1.2879.0             |                  To be add                      |
+|             |     Fortville XL710      |            8.20 0x8000a051 1.2879.0             |                  To be added                    |
 |     OS      |       Ubuntu 22.04       | Ubuntu Server 22.04 Realtime kernel 5.15.0-1009 |Ubuntu Server 22.04 Realtime kernel 5.15.0-1025  |
-|   Drivers   |   i40e for x700 series   |      Use the version comes with rt-5.15.0       |                  To be add                      |
+|   Drivers   |   i40e for x700 series   |      Use the version comes with rt-5.15.0       |                  To be added                    |
 | Cloudnative |        kubernetes        |                     1.22.1                      |            v1.23.13-eks-6022eca (beta)          |
 |             |    Container runtime     |                  Docker 0.19.0                  |           containerd://1.5.9-0ubuntu3           |
 |   FlexRAN   |  FlexRAN 22.07 pacakge   |                      22.07                      |                     same                        |
