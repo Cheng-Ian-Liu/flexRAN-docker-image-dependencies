@@ -100,7 +100,7 @@ Add following line to the end of this file
 echo "export tuned_params"
 ```
 
-Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores and 64vCores, exclude 0 and 32 as sibiling vCores for house keeping purpose)
+Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores/64vCores CPU, exclude 0 and 32 as sibiling vCores for house keeping purpose)
 
 ```shell
 isolated_cores=1-31,33-63
@@ -127,9 +127,6 @@ set tuned_params="skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftloc
 
 The other parameters of this set of best known configuration can be simply added in /etc/default/grub as below:
 
-```shell
-GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 "
-```
 Note: in the SMC lab system
 
 ```shell
@@ -145,11 +142,6 @@ $ sudo reboot
 ```
 
 Reboot the server, and check the kernel parameter, which should look like:
-
-```shell
-$ cat /proc/cmdline
-BOOT_IMAGE=/vmlinuz-5.15.0-1009-realtime root=/dev/mapper/ubuntu--vg-ubuntu--lv ro intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 cgroup_disable=memory mce=off hugepagesz=1G hugepages=60 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,28 skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll
-```
 
 Note: in the SMC lab system
 
@@ -173,6 +165,9 @@ Set cpu core frequency to 2.5Ghz
 ```shell
 $ wrmsr -a 0x199 0x1900
 ```
+
+Note: confirming with Intel on possible changes needed to the above two commands for our systen
+
 
 Set cpu uncore to fixed – maximum allowed. Disable c6 and c1e
 
