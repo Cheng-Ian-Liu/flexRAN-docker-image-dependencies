@@ -311,10 +311,29 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   below is the command for installation:
   
   ```shell
+  # on the admin machine, where dockerd is running
   $ cd /root
   $ git clone https://github.com/intel/sriov-network-device-plugin
   $ docker pull nfvpe/sriov-device-plugin
   ```
+  
+  - SRIOV VF configuration
+  
+  Creating VFs with sysfs
+
+  First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
+
+  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the OAM NIC port)
+
+  `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
+
+  To check that the VFs have been successfully created run:
+
+  `lspci | grep "Virtual Function"`
+
+   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local.
+  
+  
   - SRIOV DP configuration  
   below is an example to cofigure SRIOV DP configure map:  
 
