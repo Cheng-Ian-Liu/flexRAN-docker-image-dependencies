@@ -307,8 +307,9 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 ```
 
 - SRIOV (cni and network device plugin):
-  - follow SRIOV instruction on SRIOV GitHub - <https://github.com/intel/sriov-network-deviceplugin>.
+  - follow SRIOV instruction on SRIOV GitHub - <https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin>.
   below is the command for installation:
+  
   ```shell
   $ cd /root
   $ git clone https://github.com/intel/sriov-network-device-plugin
