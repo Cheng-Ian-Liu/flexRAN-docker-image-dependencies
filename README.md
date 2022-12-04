@@ -310,37 +310,51 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   Follow SRIOV instruction on SRIOV GitHub - <https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin>.
   
-  - SRIOV VF configuration
+  Workflow:
+    Install SR-IOV CNI and SR-IOV Network Device Plugin
+    Load device's (Physical function if it is SR-IOV capable) kernel module and bind the driver to the PF
+    Create required Virtual functions
+    Bind all VF with right drivers
+    Create a resource config map
+    Run SR-IOV Network Device Plugin (as daemonset)
+
+  - SR-IOV CNI plugin install
   
-  Get on the target EKS-A machine
+  First install go-1.16
   
-  Creating VFs with sysfs
-
-  First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
-
-  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
-
-  `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
-  
-  e.g. `root@eksa-du:/home/ec2-user# echo 8 > /sys/class/net/eno2/device/sriov_numvfs`
-
-  To check that the VFs have been successfully created run:
-
   ```
-  root@eksa-du:/home/ec2-user# lspci | grep "Virtual Function"
-  18:10.1 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:10.3 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:10.5 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:10.7 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.1 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.3 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.5 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  # on the target EKS-A node
+  $ wget https://go.dev/dl/go1.16.linux-amd64.tar.gz
+  $ tar -xvf go1.16.linux-amd64.tar.gz -C /usr/local/
+  $ export PATH=$PATH:/usr/local/go/bin
+  # check by go env
+  $ go env
   ```
-
-   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local, or via systemd service
   
-  - SR-IOV device plugin install
+  Download the sriov cni plugin source code and build
+  
+  ```
+  # continue on the target EKS-A node
+  $ git clone https://github.com/k8snetworkplumbingwg/sriov-cni.git
+  $ cd sriov-cni
+  $ git checkout v2.2
+  $ mkdir bin
+  # download and install golint
+  $ go get -u -v golang.org/x/lint/golint
+  $ cp ~/go/bin/golint bin/
+  $ go env -w GO111MODULE=off
+  $ make
+  ```
+  
+  Copy the cni binaries into the CNI folder of each worker node
+  
+  ```
+  $ cd build
+  $ cp sriov /opt/cni/bin
+  ```
+  
+  - SRIVO Network Device Plugin install
+
   
   ```shell
   # get on the admin machine, where dockerd is running
@@ -410,6 +424,39 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
       "pods": "110"  
       }
       ```
+  
+  
+  - SRIOV VF configuration
+  
+  Get on the target EKS-A machine
+  
+  Creating VFs with sysfs
+
+  First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
+
+  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
+
+  `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
+  
+  e.g. `root@eksa-du:/home/ec2-user# echo 8 > /sys/class/net/eno2/device/sriov_numvfs`
+
+  To check that the VFs have been successfully created run:
+
+  ```
+  root@eksa-du:/home/ec2-user# lspci | grep "Virtual Function"
+  18:10.1 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.3 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.5 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.1 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.3 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.5 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  ```
+
+   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local, or via systemd service
+  
+
 
   - Native CPU Manager 
 
