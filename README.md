@@ -343,7 +343,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
   ```
 
-   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local.
+   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local, or via systemd service
   
   
   - SRIOV DP configuration  
