@@ -323,7 +323,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
 
-  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the OAM NIC port)
+  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
 
   `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
   
