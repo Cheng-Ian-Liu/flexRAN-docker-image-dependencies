@@ -185,7 +185,7 @@ This section is removed, as it is handled by EKS-A installation
 
 Obtain the kubeconfig file of the target cluster, and execute the commands below to install additional K8s plugins
 
-Blow plugins are required:
+Below plugins are required:
 
 - multus:
 
@@ -307,15 +307,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 ```
 
 - SRIOV (cni and network device plugin):
-  - follow SRIOV instruction on SRIOV GitHub - <https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin>.
-  below is the command for installation:
   
-  ```shell
-  # on the admin machine, where dockerd is running
-  $ cd /root
-  $ git clone https://github.com/intel/sriov-network-device-plugin
-  $ docker pull nfvpe/sriov-device-plugin
-  ```
+  Follow SRIOV instruction on SRIOV GitHub - <https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin>.
   
   - SRIOV VF configuration
   
@@ -344,6 +337,16 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   ```
 
    This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local, or via systemd service
+  
+  - SR-IOV device plugin install
+  
+  ```shell
+  # on the admin machine, where dockerd is running
+  $ cd /root
+  $ git clone https://github.com/intel/sriov-network-device-plugin
+  $ docker pull nfvpe/sriov-device-plugin
+  ```
+  
   
   
   - SRIOV DP configuration  
