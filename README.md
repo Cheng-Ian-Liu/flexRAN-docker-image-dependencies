@@ -331,21 +331,17 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   To check that the VFs have been successfully created run:
 
-  ```root@eksa-du:/home/ec2-user# lspci | grep -i eth
-18:00.0 Ethernet controller: Intel Corporation Ethernet Controller 10G X550T (rev 01)
-18:00.1 Ethernet controller: Intel Corporation Ethernet Controller 10G X550T (rev 01)
-18:10.1 Ethernet controller: Intel Corporation X550 Virtual Function
-18:10.3 Ethernet controller: Intel Corporation X550 Virtual Function
-18:10.5 Ethernet controller: Intel Corporation X550 Virtual Function
-18:10.7 Ethernet controller: Intel Corporation X550 Virtual Function
-18:11.1 Ethernet controller: Intel Corporation X550 Virtual Function
-18:11.3 Ethernet controller: Intel Corporation X550 Virtual Function
-18:11.5 Ethernet controller: Intel Corporation X550 Virtual Function
-18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
-19:00.0 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
-19:00.1 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
-19:00.2 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)
-19:00.3 Ethernet controller: Intel Corporation I350 Gigabit Network Connection (rev 01)```
+  ```
+  root@eksa-du:/home/ec2-user# lspci | grep "Virtual Function"
+  18:10.1 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.3 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.5 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.1 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.3 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.5 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  ```
 
    This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local.
   
