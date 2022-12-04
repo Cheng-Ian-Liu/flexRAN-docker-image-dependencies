@@ -312,6 +312,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - SRIOV VF configuration
   
+  Get on the target EKS-A machine
+  
   Creating VFs with sysfs
 
   First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
@@ -341,15 +343,17 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   - SR-IOV device plugin install
   
   ```shell
-  # on the admin machine, where dockerd is running
+  # get on the admin machine, where dockerd is running
   $ cd /root
   $ git clone https://github.com/intel/sriov-network-device-plugin
   $ docker pull nfvpe/sriov-device-plugin
   ```
+  *********************
+  ********************* TODO
+  *********************
   
+  SRIOV DP configuration  
   
-  
-  - SRIOV DP configuration  
   below is an example to cofigure SRIOV DP configure map:  
 
       ```shell
