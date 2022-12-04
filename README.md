@@ -368,11 +368,43 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   root@eksa-du:# crictl pull nfvpe/sriov-device-plugin
   root@eksa-du:# crictl image ls
   ```
+  
+  - SRIOV VF configuration
+  
+  Get on the target EKS-A machine
+  
+  Creating VFs with sysfs
 
+  First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
+
+  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
+
+  `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
+  
+  e.g. `root@eksa-du:/home/ec2-user# echo 8 > /sys/class/net/eno2/device/sriov_numvfs`
+
+  To check that the VFs have been successfully created run:
+
+  ```
+  root@eksa-du:/home/ec2-user# lspci | grep "Virtual Function"
+  18:10.1 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.3 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.5 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:10.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.1 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.3 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.5 Ethernet controller: Intel Corporation X550 Virtual Function
+  18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
+  ```
+
+   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that runs on startup such as /etc/rc.local, or via systemd service
+  
+  
+  
   
   - SRIOV Device Plugin configuration  
   
-  on the admin machine, within the folder of gitclone the sriov-network-device-plugin, there is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci in the target machine to find out):  
+  on the admin machine, within the gitcloned folder the sriov-network-device-plugin, there is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  
 
       ```
       $ cd sriov-network-device-plugin 
@@ -430,38 +462,6 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
       }
       ```
   
-  
-  - SRIOV VF configuration
-  
-  Get on the target EKS-A machine
-  
-  Creating VFs with sysfs
-
-  First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
-
-  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
-
-  `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
-  
-  e.g. `root@eksa-du:/home/ec2-user# echo 8 > /sys/class/net/eno2/device/sriov_numvfs`
-
-  To check that the VFs have been successfully created run:
-
-  ```
-  root@eksa-du:/home/ec2-user# lspci | grep "Virtual Function"
-  18:10.1 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:10.3 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:10.5 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:10.7 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.1 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.3 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.5 Ethernet controller: Intel Corporation X550 Virtual Function
-  18:11.7 Ethernet controller: Intel Corporation X550 Virtual Function
-  ```
-
-   This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that is run on startup such as /etc/rc.local, or via systemd service
-  
-
 
   - Native CPU Manager 
 
