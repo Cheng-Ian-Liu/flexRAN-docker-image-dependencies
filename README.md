@@ -362,13 +362,17 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   $ git clone https://github.com/intel/sriov-network-device-plugin
   $ docker pull nfvpe/sriov-device-plugin
   ```
-  *********************
-  ********************* TODO
-  *********************
   
-  SRIOV DP configuration  
+  ```
+  # On the target EKS-A node pull the image down to local cache also
+  root@eksa-du:# crictl pull nfvpe/sriov-device-plugin
+  root@eksa-du:# crictl image ls
+  ```
+
   
-  below is an example to cofigure SRIOV DP configure map:  
+  - SRIOV Device Plugin configuration  
+  
+  on the admin machine, within the folder of gitclone the sriov-network-device-plugin, there is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci in the target machine to find out):  
 
       ```shell
       $ cd sriov-network-device-plugin 
