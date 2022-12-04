@@ -374,8 +374,9 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   on the admin machine, within the folder of gitclone the sriov-network-device-plugin, there is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci in the target machine to find out):  
 
-      ```shell
+      ```
       $ cd sriov-network-device-plugin 
+      $ cp deployments/configMap.yaml deployments/configMap.yaml.orig
       $ cat <<EOF > deployments/configMap.yaml
       apiVersion: v1  
       kind: ConfigMap  
