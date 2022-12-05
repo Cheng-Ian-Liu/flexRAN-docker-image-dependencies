@@ -487,63 +487,63 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - SRIOV Device Plugin configuration  
   
-  on the admin machine, within the gitcloned folder the sriov-network-device-plugin, there is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  
+  on the admin machine, within the gitcloned folder the sriov-network-device-plugin, below is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  (more configuration examples can be found in sriov-device-plugin github page)
 
-      ```
-      $ cd sriov-network-device-plugin 
-      $ cp deployments/configMap.yaml deployments/configMap.yaml.orig
-      $ cat <<EOF > deployments/configMap.yaml
-      apiVersion: v1  
-      kind: ConfigMap  
-      metadata:  
-        name: sriovdp-config  
-        namespace: kube-system  
-      data:  
-        config.json: |  
-          {  
-              "resourceList": [  
-                  {  
-                    "resourceName": "intel_fec_5g",  
-                      "deviceType": "accelerator",  
-                      "selectors": {  
-                          "vendors": ["8086"],  
-                          "devices": ["0d5d"]  
-                      }  
-                  },  
-                  {  
-                    "resourceName": "intel_sriov_odu",  
-                      "selectors": {  
-                          "vendors": ["8086"],  
-                          "devices": ["154c"],  
-                          "drivers": ["vfio-pci"],  
-                          "pfNames": ["ens9f1"]  
-                      }  
-                  },  
-                  {  
-                    "resourceName": "intel_sriov_oru",  
-                      "selectors": {  
-                          "vendors": ["8086"],  
-                          "devices": ["154c"],  
-                          "drivers": ["vfio-pci"],  
-                          "pfNames": ["ens9f0"]  
-                      }  
-                  }  
-              ]  
-          }  
-      EOF  
-      $ kubectl create -f deployments/configMap.yaml  
-      $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
-      $ kubectl get node <your-k8s-worker> -o json | jq '.status.allocatable' 
-      {  
-      "cpu": "28",  
-      "ephemeral-storage": "143494008185",  
-      "hugepages-1Gi": "48Gi",  
-      "intel.com/intel_sriov_dpdk": "4",  
-      "intel.com/intel_sriov_netdevice": "4",  
-      "memory": "48012416Ki",  
-      "pods": "110"  
-      }
-      ```
+ ```
+ $ cd sriov-network-device-plugin 
+ $ cp deployments/configMap.yaml deployments/configMap.yaml.orig
+ $ cat <<EOF > deployments/configMap.yaml
+ apiVersion: v1
+ kind: ConfigMap
+ metadata:
+   name: sriovdp-config
+   namespace: kube-system
+ data:
+   config.json: |
+     {
+         "resourceList": [
+             {
+               "resourceName": "intel_fec_5g",
+                 "deviceType": "accelerator",
+                 "selectors": {
+                     "vendors": ["8086"],
+                     "devices": ["0d5c"]
+                 }
+             },
+             {
+               "resourceName": "intel_sriov_dpdk",
+                 "selectors": {
+                     "vendors": ["8086"],
+                     "devices": ["1565"],
+                     "drivers": ["vfio-pci"],
+                     "pfNames": ["eno2"]
+                 }
+             },
+             {
+               "resourceName": "intel_sriov_netdevice",
+                 "selectors": {
+                     "vendors": ["8086"],
+                     "devices": ["1565"],
+                     "drivers": ["ixgbevf"],
+                     "pfNames": ["eno2"]
+                 } 
+             }
+         ]
+     }
+  EOF  
+  $ kubectl create -f deployments/configMap.yaml  
+  $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
+  $ kubectl get node <your-k8s-worker> -o json | jq '.status.allocatable' 
+  {  
+  "cpu": "28", 
+  "ephemeral-storage": "143494008185",  
+  "hugepages-1Gi": "48Gi",  
+  "intel.com/intel_sriov_dpdk": "4",  
+  "intel.com/intel_sriov_netdevice": "4",  
+  "memory": "48012416Ki",  
+  "pods": "110"  
+  }
+  ```
   
 
   - Native CPU Manager 
