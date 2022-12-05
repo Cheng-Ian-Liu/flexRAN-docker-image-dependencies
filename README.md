@@ -466,6 +466,25 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   ===========================
   ```
   
+  Bind the last four VFs of eno2 to vfio-pci:
+  
+  `dpdk-devbind.py -b vfio-pci 18:11.1 18:11.3 18:11.5 18:11.7`
+  
+  Re-run the dpdk-devbind.py -s command should show the VFs are binded with DPDP compatible drivers (i.e. vfio-pci)
+  
+  Bind the top four VFs of eno2 to ixgbevf (default vf driver, so there should be no change):
+  
+  ```
+  root@eksa-du:/opt/dpdk-21.11/usertools# dpdk-devbind.py -b ixgbevf 18:10.1 18:10.3 18:10.5 18:10.7
+  Notice: 0000:18:10.1 already bound to driver ixgbevf, skipping
+  Notice: 0000:18:10.3 already bound to driver ixgbevf, skipping
+  Notice: 0000:18:10.5 already bound to driver ixgbevf, skipping
+  Notice: 0000:18:10.7 already bound to driver ixgbevf, skipping
+  ```
+  
+  Now you are ready to apply SRIOV device plugin configuration and start the dp_daemonset
+  
+  
   - SRIOV Device Plugin configuration  
   
   on the admin machine, within the gitcloned folder the sriov-network-device-plugin, there is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  
