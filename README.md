@@ -600,6 +600,43 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   kubectl create -f sriov-dpdk-crd.yaml
   ```
   
+  Check the NADs are created
+  ```
+  sys-1019-admin@sys1019admin-CSE-515-R407:~/EKS-A-install/sriov$ kubectl get net-attach-def -A
+  NAMESPACE   NAME               AGE
+  default     sriov-dpdk1        4s
+  default     sriov-netdevice1   11s
+  ```
+  
+  Create testpod with SR-IOV resource request
+  
+  ```
+  cat <<EOF > pod-sriov-test.yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    name: sriov-test-pod1
+    annotations:
+      k8s.v1.cni.cncf.io/networks: sriov-netdevice1, sriov-dpdk1
+  spec:
+    containers:
+    - name: appcntr1
+      image: centos/tools
+      imagePullPolicy: IfNotPresent
+      command: [ "/bin/bash", "-c", "--" ]
+      args: [ "while true; do sleep 300000; done;" ]
+      resources:
+        requests:
+          intel.com/intel_sriov_netdevice: '1'
+          intel.com/intel_sriov_dpdk: '1'
+        limits:
+          intel.com/intel_sriov_netdevice: '1'
+          intel.com/intel_sriov_dpdk: '1'
+  EOF
+  
+  kubectl create –f pod-sriov-test.yaml
+  ```
+  
   
   - Native CPU Manager 
 
