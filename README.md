@@ -551,6 +551,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   - Test SRIOV Network Device Plugin
   
   On the admin machinve, create two Network Attachment Definitions for sriov-netdevice and sriov-dpdk resources
+  
+  (1) for sriov-netdevice NAD, modify the IP address/gateway accordingly to your enviornment
   ```
   $ cat <<EOF > sriov-netdevice.yaml
   apiVersion: "k8s.cni.cncf.io/v1"
@@ -574,7 +576,31 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
     }
   }'
   EOF
-
+  
+  kubectl create -f sriov-netdevice.yaml
+  ```
+  
+  (2) for sriov-dpdk NAD, modify the IP address/gateway accordingly to your enviornment
+  ```
+  cat <<EOF > sriov-dpdk-crd.yaml
+  apiVersion: "k8s.cni.cncf.io/v1"
+  kind: NetworkAttachmentDefinition
+  metadata:
+    name: sriov-dpdk1
+    annotations:
+      k8s.v1.cni.cncf.io/resourceName: intel.com/intel_sriov_dpdk
+  spec:
+    config: '{
+    "type": "sriov",
+    "cniVersion": "0.3.1",
+    "name": "sriov-dpdk"
+  }'
+  EOF
+  
+  kubectl create -f sriov-dpdk-crd.yaml
+  ```
+  
+  
   - Native CPU Manager 
 
   enable this plugin by following below link:  
