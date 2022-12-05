@@ -405,7 +405,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   Before we apply SRIOV device plugin, we need to install DPDK on the target machine host, and bind VF devices with DPDK drivers.
   
-  Follow the procedure in the Environment Prep section to install DPDK. Finish at least the DPDK package install (until the ninja install)
+  Theoretically, we can just move the dpdk-devbind.py script over to the target machine, without installing the whole DPDK package on the target machine. But for now, we can follow the procedure in the Environment Prep section to install DPDK. Finish at least the DPDK package install (until the ninja install)
   
   Then you can use the usertools that comes with DPDK package to check device drivers in use, and bind VF drivers
   
