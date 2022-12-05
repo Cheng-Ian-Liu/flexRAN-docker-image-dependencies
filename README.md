@@ -637,6 +637,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   kubectl create –f pod-sriov-test.yaml
   ```
   
+  Note: currently this test cannot be completed due to the eno2 interface is not connected in SMC dev lab. Will test it once the setup is moved to permanent lab with 2nd NIC port connectivity. In the meantime, will check with Intel to get the procedure to enable SR-IOV on OAM NIC port.
+  
   
   - Native CPU Manager 
 
