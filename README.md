@@ -404,8 +404,67 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   Before we apply SRIOV device plugin, we need to install DPDK on the target machine host, and bind VF devices with DPDK drivers.
   
-  Follow the procedure in the Environment Prep section to install DPDK.
+  Follow the procedure in the Environment Prep section to install DPDK. Finish at least the DPDK package install (until the ninja install)
   
+  Then you can use the usertools that comes with DPDK package to check device drivers in use, and bind VF drivers
+  
+  Check current devices and drivers:
+
+  ```
+  root@eksa-du:/opt/dpdk-21.11/usertools# dpdk-devbind.py -s
+  
+  # example output
+  
+  Network devices using kernel driver
+===================================
+0000:18:00.0 'Ethernet Controller 10G X550T 1563' if=eno1 drv=ixgbe unused=vfio-pci *Active*
+0000:18:00.1 'Ethernet Controller 10G X550T 1563' if=eno2 drv=ixgbe unused=vfio-pci
+0000:18:10.1 'X550 Virtual Function 1565' if=eno2v0 drv=ixgbevf unused=vfio-pci
+0000:18:10.3 'X550 Virtual Function 1565' if=eno2v1 drv=ixgbevf unused=vfio-pci
+0000:18:10.5 'X550 Virtual Function 1565' if=eno2v2 drv=ixgbevf unused=vfio-pci
+0000:18:10.7 'X550 Virtual Function 1565' if=eno2v3 drv=ixgbevf unused=vfio-pci
+0000:18:11.1 'X550 Virtual Function 1565' if=eno2v4 drv=ixgbevf unused=vfio-pci
+0000:18:11.3 'X550 Virtual Function 1565' if=eno2v5 drv=ixgbevf unused=vfio-pci
+0000:18:11.5 'X550 Virtual Function 1565' if=eno2v6 drv=ixgbevf unused=vfio-pci
+0000:18:11.7 'X550 Virtual Function 1565' if=eno2v7 drv=ixgbevf unused=vfio-pci
+0000:19:00.0 'I350 Gigabit Network Connection 1521' if=enp25s0f0 drv=igb unused=vfio-pci
+0000:19:00.1 'I350 Gigabit Network Connection 1521' if=enp25s0f1 drv=igb unused=vfio-pci
+0000:19:00.2 'I350 Gigabit Network Connection 1521' if=eno3 drv=igb unused=vfio-pci
+0000:19:00.3 'I350 Gigabit Network Connection 1521' if=eno4 drv=igb unused=vfio-pci
+
+Other Baseband devices
+======================
+0000:c3:00.0 'Device 0d5c' unused=vfio-pci
+
+No 'Crypto' devices detected
+============================
+
+DMA devices using kernel driver
+===============================
+0000:00:01.0 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.1 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.2 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.3 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.4 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.5 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.6 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.7 'Device 0b00' drv=ioatdma unused=vfio-pci
+
+No 'Eventdev' devices detected
+==============================
+
+No 'Mempool' devices detected
+=============================
+
+No 'Compress' devices detected
+==============================
+
+No 'Misc (rawdev)' devices detected
+===================================
+
+No 'Regex' devices detected
+===========================
+```
   
   - SRIOV Device Plugin configuration  
   
