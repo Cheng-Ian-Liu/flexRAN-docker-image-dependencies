@@ -651,17 +651,20 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   `Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cpu-manager-policy=static --system-reserved=cpu=1,memory=1Gi --topology-manager-policy=best-effort"`
   
+  Note to avoid kubelet restart loop when modifying the kubelet parameters, remove the following file for the lock on cpu_manager_state
   
+  ```
+  rm -rf /var/lib/kubelet/cpu_manager_state
+  ```
   
-  Restart Kubelet by:
+  Then restart Kubelet by:
 
   ```
   $ systemctl daemon-reload
   $ systemctl restart kubelet
   $ systemctl status kubelet
   ```
-  
-  ?? Note: noticed kubelet restart loop when modifying the kubelet parameters - need to troubleshoot
+ 
   
   Test a pod with static CPU manager
   
