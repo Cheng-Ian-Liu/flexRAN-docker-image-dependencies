@@ -355,6 +355,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - SRIVO Network Device Plugin install
 
+  ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways
   
   ```shell
   # get on the admin machine, where dockerd is running
