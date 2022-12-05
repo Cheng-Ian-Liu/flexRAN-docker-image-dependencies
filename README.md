@@ -548,6 +548,32 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   }
   ```
   
+  - Test SRIOV Network Device Plugin
+  
+  On the admin machinve, create two Network Attachment Definitions for sriov-netdevice and sriov-dpdk resources
+  ```
+  $ cat <<EOF > sriov-netdevice.yaml
+  apiVersion: "k8s.cni.cncf.io/v1"
+  kind: NetworkAttachmentDefinition
+  metadata:
+    name: sriov-netdevice1
+    annotations:
+      k8s.v1.cni.cncf.io/resourceName: intel.com/intel_sriov_netdevice
+  spec:
+    config: '{
+    "type": "sriov",
+    "cniVersion": "0.3.1",
+    "name": "sriov-network",
+    "ipam": {
+      "type": "host-local",
+      "subnet": "10.56.217.0/24",
+      "routes": [{
+        "dst": "0.0.0.0/0"
+      }],
+      "gateway": "10.56.217.1"
+    }
+  }'
+  EOF
 
   - Native CPU Manager 
 
