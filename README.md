@@ -400,6 +400,11 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
    This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that runs on startup such as /etc/rc.local, or via systemd service
   
   
+  - DPDK binding 
+
+  Before we apply SRIOV device plugin, we need to install DPDK on the target machine host, and bind VF devices with DPDK drivers.
+  
+  Follow the procedure in the Environment Prep section to install DPDK.
   
   
   - SRIOV Device Plugin configuration  
@@ -474,13 +479,27 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
 ### 3.4.1. DPDK pakage
 
+Install pre-req packages
+
+```
+$ apt install libnuma-dev libhugetlbfs-dev build-essential cmake meson pkgconf python3-pyelftools
+```
+
+?? Do we need the OneAPI Basekit for platform testing without FlexRAN Pods?
+
+
+
 Download DPDK
 
-```shell
+```
+# get on the target EKS-A machine
 $ cd /opt/  
 $ wget http://static.dpdk.org/rel/dpdk-21.11.tar.xz  
 $ tar xf /opt/dpdk-21.11.tar.xz
 ```
+
+?? Do we need the dpdk-22.07-rc3.patch( Refer to 645964 to get the patch)
+
 
 Build and install DPDK
 
