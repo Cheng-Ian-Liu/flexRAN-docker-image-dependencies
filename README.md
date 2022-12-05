@@ -642,10 +642,52 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - Native CPU Manager 
 
-  enable this plugin by following below link:  
+  Since Kubernetes v1.16.1, there is the support of the CPU manager and topology manager. In this section, steps are provided on how to enable and use these features. You can get more information from the Kubernetes document:
+    https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/
+    https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/
+  These features are controlled by the kubelet* on the worker node. To enable these features, change the kuberlet configuration of worker node and restart kubelet.
 
-  - <https://kubernetes.io/docs/tasks/administer-cluster/cpu-management-policies/>  
-  - <https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/> 
+  On the target EKS-A node, modify the /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf file and add more parameters to the KUBELET_CONFIG_ARGS as follows:
+  
+  `Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cpu-manager-policy=static --system-reserved=cpu=1,memory=1Gi --topology-manager-policy=best-effort"`
+  
+  Restart Kubelet by:
+
+  ```
+  $ systemctl daemon-reload
+  $ systemctl restart kubelet
+  $ systemctl status kubelet
+  ```
+  Test a pod with static CPU manager
+  
+  On the admin server
+  
+  ```
+  $ cat <<EOF > test-cpu-manager.yaml
+  apiVersion: v1
+  kind: Pod
+  metadata:
+    labels:
+      app: test-cpu-manager
+    name: test-cpu-manager
+  spec:
+    containers:
+    - image: centos:centos7.8.2003
+      command:
+      - sleep
+      - inf
+      name: example
+      resources:
+        requests:
+          cpu: "4"
+          memory: "1Gi"
+        limits:
+          cpu: "4"
+          memory: "1Gi"
+  EOF
+  ```
+  
+ 
 
 ## 3.4. Prepare env
 
