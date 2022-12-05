@@ -355,7 +355,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - SRIVO Network Device Plugin install
 
-  ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways
+  ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because the sriov-network-device-plugin version update)
   
   ```shell
   # get on the admin machine, where dockerd is running
@@ -707,7 +707,7 @@ Install pre-req packages
 $ apt install libnuma-dev libhugetlbfs-dev build-essential cmake meson pkgconf python3-pyelftools
 ```
 
-?? Do we need the OneAPI Basekit for platform testing without FlexRAN Pods?
+Note: We only need the OneAPI Basekit for building the FlexRAN image ourselves. For platform testing, we do not need to install OneAPI Basekit on the target machine
 
 
 
@@ -720,7 +720,7 @@ $ wget http://static.dpdk.org/rel/dpdk-21.11.tar.xz
 $ tar xf /opt/dpdk-21.11.tar.xz
 ```
 
-?? Do we need the dpdk-22.07-rc3.patch( Refer to 645964 to get the patch)
+Note: We only need the dpdk-22.07-rc3.patch (Refer to Intel Doc 645964 to get the patch) for building the FlexRAN image ourselves. For platform testing, we do not need to install dpdk-22.07-rc3.patch on the target machine
 
 
 Build and install DPDK
