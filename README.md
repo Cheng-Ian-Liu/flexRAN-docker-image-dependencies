@@ -530,7 +530,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
              }
          ]
      }
-  EOF  
+  EOF
   $ kubectl create -f deployments/configMap.yaml  
   $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
   $ kubectl get node <your-k8s-worker> -o json | jq '.status.allocatable' 
