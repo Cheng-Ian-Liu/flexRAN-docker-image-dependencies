@@ -503,6 +503,8 @@ $ tar xf /opt/dpdk-21.11.tar.xz
 
 Build and install DPDK
 
+Note: this step can take 10mins, so run it in a tmux session if possible
+
 ```shell
 $ cd /opt/dpdk_21.11
 $ meson build
