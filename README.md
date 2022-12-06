@@ -761,7 +761,7 @@ $ ninja
 $ ninja install
 ```
 
-Build igb_uio
+Build igb_uio (for Accelerator PF driver binding purpose)
 
 ```shell
 $ cd /opt
@@ -778,13 +778,30 @@ $ modprobe uio
 $ insmod /opt/dpdk-kmods/linux/igb_uio/igb_uio.ko
 $ lspci | grep 0d5c
 
+# bind accelerator PF
+# change the address according to your environment
 $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b igb_uio 0000:b1:00.0
 $ echo 0 > /sys/bus/pci/devices/0000:b1:00.0/max_vfs
 $ echo 2 > /sys/bus/pci/devices/0000:b1:00.0/max_vfs
-$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:b2:00.0
-$ cd /opt/pf-bb-config
-$ ./pf_bb_config ACC100 -c acc100/acc100_config_vf_5g.cfg
 
+# bind accelerator VF
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:b2:00.0
+
+# pf-bb-config (build and then config the accelerator)
+$ cd /opt
+$ git clone https://github.com/intel/pf-bb-config.git
+$ cd /opt/pf-bb-config
+$ ./build.sh
+$ ./pf_bb_config ACC100 -c acc100/acc100_config_vf_5g.cfg
+== pf_bb_config Version v22.07-0-g7843e91 ==
+Tue Dec  6 04:47:52 2022:INFO:Queue Groups: 4 5GUL, 4 5GDL, 0 4GUL, 0 4GDL
+Tue Dec  6 04:47:52 2022:INFO:Configuration in VF mode
+Tue Dec  6 04:47:53 2022:INFO: ROM version MM 99ANA5
+Tue Dec  6 04:47:54 2022:INFO:DDR Training completed in 1362 ms
+Tue Dec  6 04:47:54 2022:INFO:PF ACC100 configuration complete
+Tue Dec  6 04:47:54 2022:INFO:ACC100 PF [0000:c3:00.0] configuration complete!
+
+# configure fronthaul NIC
 $ echo 0 > /sys/bus/pci/devices/0000:4b:00.0/sriov_numvfs
 $ echo 4 > /sys/bus/pci/devices/0000:4b:00.0/sriov_numvfs
 $ ip link set ens9f0 vf 0 mac 00:11:22:33:00:00
@@ -806,6 +823,7 @@ $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.2 0000:4b:0a.
 ```
 
 After configuration, need to restart SRIOV docker container to make VF resource ready.
+?? Not needed in our containerd based environment
 
 ```shell
 $ cat <<EOF > /opt/restart_sriov_container.sh
