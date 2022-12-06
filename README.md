@@ -684,18 +684,44 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
       command:
       - sleep
       - inf
+      securityContext:
+        privileged: true
       name: example
       resources:
         requests:
-          cpu: "4"
+          cpu: "16"
           memory: "1Gi"
         limits:
-          cpu: "4"
+          cpu: "16"
           memory: "1Gi"
   EOF
   ```
   
- 
+  Login the POD/container and check the taskset:
+  ```
+  $ kubectl apply -f test-cpu-manager.yaml
+  $ kubectl exec test-cpu-manager -it bash
+  $ taskset -p 1
+  pid 1's current affinity mask: 1fe000001fe
+  ```
+  This means core 1-8 and 33-40 are allocated to the pod
+  
+  Now you can run another cyclictest from within the pod to validate the real-time performance
+  
+  ```
+  e.g. cyclict test command from within the pod
+  yum update -y && yum install -y numactl-devel git make gcc
+  git clone git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+  cd rt-tests
+  git checkout stable/v1.0
+  make all install
+
+  #run the following in a tmux session to avoid ssh disconnect
+  taskset -c 1-8,33-40 ./cyclictest -m -p95 -h 15 -a 1-8,33-40 -t 16 -D 12h
+  ```
+  Note: the current results still need further tunning.
+  
+  
 
 ## 3.4. Prepare env
 
