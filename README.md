@@ -1437,6 +1437,4 @@ You need enter the pod and execute the test manually. the steps are the same as 
 For GPL/LGPL open source libs/components used by flexran docker image at run time.
 User can find the used version in below git hub repo: <https://github.com/intel/flexRAN-docker-image-dependencies>
   
-## 3.9. Customer Support Declare
 
-For further support, please contact intel flexRAN marketing team and FAE/PAE team.
