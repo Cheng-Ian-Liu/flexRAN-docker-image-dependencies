@@ -708,7 +708,12 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   $ taskset -p 1
   pid 1's current affinity mask: 1fe000001fe
   ```
-  This means core 1-8 and 33-40 are allocated to the pod
+  This means core 1-8 and 33-40 are allocated to the pod, or you can use the following command to find out the allocated cores
+  
+  ```
+  $ grep Cpus_allowed_list /proc/self/status
+  Cpus_allowed_list:      1-8,33-40
+  ```
   
   Now you can run another cyclictest from within the pod to validate the real-time performance
   
