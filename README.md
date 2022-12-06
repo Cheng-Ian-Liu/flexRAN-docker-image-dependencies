@@ -355,7 +355,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - SRIVO Network Device Plugin install
 
-  ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because the sriov-network-device-plugin version update)
+  
+  ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc)
   
   ```shell
   # get on the admin machine, where dockerd is running
