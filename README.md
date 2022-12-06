@@ -832,47 +832,25 @@ kubectl delete -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
 kubectl apply -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
 ```
 
-After configuration, need to restart SRIOV docker container to make VF resource ready.
-?? Not needed in our containerd based environment?
+Now you should be able to see all the K8s resources allocatable (e.g. SRIOV DPDK, non-DPDK/net-device, Accelerator, HugePage Mem, etc.)
 
 ```shell
-$ cat <<EOF > /opt/restart_sriov_container.sh
-  docker ps | grep sriov
-  docker kill `docker ps | grep sriov | head -n 1 | awk -F ' ' '{print $1}'`
-  while ((`docker ps | grep sriov | wc -l` < 2 ))
-  do
-     sleep 3
-     docker ps | grep sriov >/dev/null 2>&1
-     echo "..."
-  done
-EOF
-$chmod +x /opt/restart_sriov_container.sh; sh /opt/restart_sriov_container.sh
+kubectl get node eksa-du -o json | jq '.status.allocatable'
+{
+  "cpu": "63",
+  "ephemeral-storage": "885476035962",
+  "hugepages-1Gi": "32Gi",
+  "hugepages-2Mi": "0",
+  "intel.com/intel_fec_5g": "1",
+  "intel.com/intel_sriov_dpdk": "4",
+  "intel.com/intel_sriov_netdevice": "4",
+  "memory": "96801784Ki",
+  "pods": "110"
+}
 ```
 
-After restart sriov container, the resources can be seen thru below command:
 
-```shell
-$ kubectl get node dockerimagerel -o json | jq '.status.allocatable'
-{  
-  "cpu": "125",  
-  "ephemeral-storage": "427010803415",  
-  "hugepages-1Gi": "60Gi",  
-  "hugepages-2Mi": "0",  
-  "intel.com/intel_fec_5g": "1",  
-  "intel.com/intel_sriov_odu": "4",  
-  "intel.com/intel_sriov_oru": "4",  
-  "memory": "193028Mi",  
-  "pods": "110"  
-}  
-```
-
-label node 
-
-```shell
-$ kubectl label node dockerimagerel testnode=worker1
-```
-
-## 3.5. docker image prepare
+## 3.5. flexran docker image prepare
 
 login docker hub (for external user)
 
