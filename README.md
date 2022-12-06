@@ -489,6 +489,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   - SRIOV Device Plugin configuration  
   
   on the admin machine, within the gitcloned folder the sriov-network-device-plugin, below is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  (more configuration examples can be found in sriov-device-plugin github page)
+  
+  Note: the acc100 device VF configuration step is shown in the later section of this doc. Once VF is enabled on ACC100, use the VF's device ID 0d5d instead of the PF's device ID 0d5c
 
  ```
  $ cd sriov-network-device-plugin 
@@ -508,7 +510,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
                  "deviceType": "accelerator",
                  "selectors": {
                      "vendors": ["8086"],
-                     "devices": ["0d5c"]
+                     "devices": ["0d5d"],
+                     "drivers": ["vfio-pci"]
                  }
              },
              {
@@ -822,8 +825,12 @@ $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.0 0000:4b:0a.
 $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.2 0000:4b:0a.3
 ```
 
-?? Note: need to re-apply the sriov-dp configmap.yaml, with the correct accelerator information?
-kubectl create -f deployments/configMap.yaml
+Note: need to re-apply the sriov-dp configmap.yaml (if you have not updated the acc100 VF's device ID in the configmap), also the sriov-dp daemonset needs to be deleted and re-created in order for K8s to pick it up and show it in the resource.
+
+```
+kubectl delete -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
+kubectl apply -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
+```
 
 After configuration, need to restart SRIOV docker container to make VF resource ready.
 ?? Not needed in our containerd based environment?
