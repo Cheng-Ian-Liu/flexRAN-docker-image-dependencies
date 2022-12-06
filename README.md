@@ -822,8 +822,11 @@ $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.0 0000:4b:0a.
 $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.2 0000:4b:0a.3
 ```
 
+?? Note: need to re-apply the sriov-dp configmap.yaml, with the correct accelerator information?
+kubectl create -f deployments/configMap.yaml
+
 After configuration, need to restart SRIOV docker container to make VF resource ready.
-?? Not needed in our containerd based environment
+?? Not needed in our containerd based environment?
 
 ```shell
 $ cat <<EOF > /opt/restart_sriov_container.sh
