@@ -723,7 +723,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   #run the following in a tmux session to avoid ssh disconnect
   taskset -c 1-8,33-40 ./cyclictest -m -p95 -h 15 -a 1-8,33-40 -t 16 -D 12h
   ```
-  Note: the current results still need further tunning.
+  ?? Note: the current results still need further tunning.
   
   
 
