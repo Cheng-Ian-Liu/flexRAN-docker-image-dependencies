@@ -353,7 +353,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   $ cp sriov /opt/cni/bin
   ```
   
-  - SRIVO Network Device Plugin install
+  - SRIVO Network Device Plugin image pull
 
   
   ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc)
@@ -379,7 +379,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
 
-  To create 8 virtual functions run: (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
+  To create 8 virtual functions run: 
+  (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
 
   `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
   
