@@ -654,7 +654,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   On the target EKS-A node, modify the /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf file and add more parameters to the KUBELET_CONFIG_ARGS as follows:
   
-  `Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cpu-manager-policy=static --system-reserved=cpu=1,memory=1Gi --topology-manager-policy=best-effort"`
+  `Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cpu-manager-policy=static --kube-reserved=cpu=1,memory=2Gi,ephemeral-storage=1Gi --system-reserved=cpu=1,memory=2Gi,ephemeral-storage=1Gi --reserved-cpus=0-3 --topology-manager-policy=single-numa-node"`
   
   Note to avoid kubelet restart loop when modifying the kubelet parameters, remove the following file for the lock on cpu_manager_state
   
