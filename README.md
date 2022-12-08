@@ -671,21 +671,21 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   ```
  
   
-  Test a pod with static CPU manager
+  Test a pod with static CPU manager (notice to use the Ubuntu-based pod image, as performance degradation noticed with CentOS based pod image)
   
   On the admin server
   
   ```
-  $ cat <<EOF > test-cpu-manager.yaml
+  $ cat <<EOF > test-cpu-manager-ubuntu.yaml
   apiVersion: v1
   kind: Pod
   metadata:
     labels:
-      app: test-cpu-manager
-    name: test-cpu-manager
+      app: test-cpu-manager-ubuntu
+    name: test-cpu-manager-ubuntu
   spec:
     containers:
-    - image: centos:centos7.8.2003
+    - image: ubuntu:latest
       command:
       - sleep
       - inf
@@ -704,8 +704,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   Login the POD/container and check the taskset:
   ```
-  $ kubectl apply -f test-cpu-manager.yaml
-  $ kubectl exec test-cpu-manager -it bash
+  $ kubectl apply -f test-cpu-manager-ubuntu.yaml
+  $ kubectl exec test-cpu-manager-ubuntu -it bash
   $ taskset -p 1
   pid 1's current affinity mask: 1fe000001fe
   ```
@@ -719,32 +719,16 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   Now you can run another cyclictest from within the pod to validate the real-time performance
   
   ```
-  e.g. cyclict test command from within the pod - for CentOS based pod
-  yum update -y && yum install -y numactl-devel git make gcc
-  git clone git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-  cd rt-tests
-  git checkout stable/v1.0
-  make all install
-
-  #run the following in a tmux session to avoid ssh disconnect
-  taskset -c 1-8,33-40 ./cyclictest -m -p95 -h 15 -a 1-8,33-40 -t 16 -D 12h
-  ```
-  
-  ?? Note: the current results still need further tunning.
-  
-  
-  ```
   e.g. cyclict test command from within the pod - for Ubuntu based pod
   
-  apt update -y
-  apt install -y git make gcc libnuma-dev
-  git clone https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
-  cd rt-tests/
-  make
+  $apt update -y && apt install -y git make gcc libnuma-dev
+  $git clone https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+  $cd rt-tests/
+  $make
   
   #run the following in a tmux session to avoid ssh disconnect
-  grep Cpus_allowed_list /proc/self/status
-  taskset -c 4-11 ./cyclictest -m -p95 -h 15 -a 5-11 -t 7 --mainaffinity=4 -D 12h
+  $grep Cpus_allowed_list /proc/self/status
+  $taskset -c 4-11 ./cyclictest -m -p95 -h 15 -a 5-11 -t 7 --mainaffinity=4 -D 12h
   ```
   
 
