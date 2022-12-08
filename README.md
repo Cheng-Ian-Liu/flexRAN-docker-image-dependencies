@@ -719,7 +719,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   Now you can run another cyclictest from within the pod to validate the real-time performance
   
   ```
-  e.g. cyclict test command from within the pod
+  e.g. cyclict test command from within the pod - for CentOS based pod
   yum update -y && yum install -y numactl-devel git make gcc
   git clone git://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
   cd rt-tests
@@ -729,8 +729,23 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   #run the following in a tmux session to avoid ssh disconnect
   taskset -c 1-8,33-40 ./cyclictest -m -p95 -h 15 -a 1-8,33-40 -t 16 -D 12h
   ```
+  
   ?? Note: the current results still need further tunning.
   
+  
+  ```
+  e.g. cyclict test command from within the pod - for Ubuntu based pod
+  
+  apt update -y
+  install -y git make gcc libnuma-dev
+  git clone https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+  cd rt-tests/
+  make
+  
+  #run the following in a tmux session to avoid ssh disconnect
+  grep Cpus_allowed_list /proc/self/status
+  taskset -c 12-15 ./cyclictest -m -p95 -h 15 -a 13-15 -t 3 --mainaffinity=12 -D 12h
+  ```
   
 
 ## 3.4. Prepare env
