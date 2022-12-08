@@ -737,14 +737,14 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   e.g. cyclict test command from within the pod - for Ubuntu based pod
   
   apt update -y
-  install -y git make gcc libnuma-dev
+  apt install -y git make gcc libnuma-dev
   git clone https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
   cd rt-tests/
   make
   
   #run the following in a tmux session to avoid ssh disconnect
   grep Cpus_allowed_list /proc/self/status
-  taskset -c 12-15 ./cyclictest -m -p95 -h 15 -a 13-15 -t 3 --mainaffinity=12 -D 12h
+  taskset -c 4-11 ./cyclictest -m -p95 -h 15 -a 5-11 -t 7 --mainaffinity=4 -D 12h
   ```
   
 
