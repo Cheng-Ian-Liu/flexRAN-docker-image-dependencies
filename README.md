@@ -652,11 +652,11 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
     https://kubernetes.io/docs/tasks/administer-cluster/topology-manager/
   These features are controlled by the kubelet* on the worker node. To enable these features, change the kuberlet configuration of worker node and restart kubelet.
 
-  On the target EKS-A node, modify the /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf file and add more parameters to the KUBELET_CONFIG_ARGS as follows:
+  On the target EKS-A node, modify the /usr/lib/systemd/system/kubelet.service.d/10-kubeadm.conf file and add more parameters to the KUBELET_CONFIG_ARGS as follows: (note: modify the reserved CPU vCore based on your CPU total cores, we want to reserve a sibling vCore pair for OS and Kubelet/Kubeadm to use)
   
-  `Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cpu-manager-policy=static --kube-reserved=cpu=1,memory=2Gi,ephemeral-storage=1Gi --system-reserved=cpu=1,memory=2Gi,ephemeral-storage=1Gi --reserved-cpus=0-3 --topology-manager-policy=single-numa-node"`
+  `Environment="KUBELET_CONFIG_ARGS=--config=/var/lib/kubelet/config.yaml --cpu-manager-policy=static --reserved-cpus=0,32 --topology-manager-policy=best-effort"`
   
-  Note to avoid kubelet restart loop when modifying the kubelet parameters, remove the following file for the lock on cpu_manager_state
+  Note to avoid kubelet restart loop when modifying the kubelet parameters for single-node system, remove the following file for the lock on cpu_manager_state
   
   ```
   rm -rf /var/lib/kubelet/cpu_manager_state
