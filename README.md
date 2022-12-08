@@ -728,7 +728,28 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   #run the following in a tmux session to avoid ssh disconnect
   $grep Cpus_allowed_list /proc/self/status
-  $taskset -c 4-11 ./cyclictest -m -p95 -h 15 -a 5-11 -t 7 --mainaffinity=4 -D 12h
+  # Cpus_allowed_list:	1-8,33-40
+  
+  $taskset -c 1-8,33-40 ./cyclictest -m -p95 -h 15 -a 2-8,33-40 -t 15 --mainaffinity=1 -D 12h
+  
+  # /dev/cpu_dma_latency set to 0us
+  policy: fifo: loadavg: 0.68 0.90 0.96 1/2314 3555
+
+  T: 0 ( 3541) P:95 I:1000 C:  23197 Min:      2 Act:    3 Avg:    2 Max:       3
+  T: 1 ( 3542) P:95 I:1000 C:  23197 Min:      2 Act:    2 Avg:    2 Max:       3
+  T: 2 ( 3543) P:95 I:1000 C:  23197 Min:      2 Act:    2 Avg:    2 Max:       3
+  T: 3 ( 3544) P:95 I:1000 C:  23198 Min:      2 Act:    3 Avg:    2 Max:       3
+  T: 4 ( 3545) P:95 I:1000 C:  23198 Min:      2 Act:    3 Avg:    2 Max:       5
+  T: 5 ( 3546) P:95 I:1000 C:  23199 Min:      2 Act:    2 Avg:    2 Max:       3
+  T: 6 ( 3547) P:95 I:1000 C:  23200 Min:      2 Act:    3 Avg:    2 Max:       3
+  T: 7 ( 3548) P:95 I:1000 C:  23199 Min:      2 Act:    2 Avg:    2 Max:       4
+  T: 8 ( 3549) P:95 I:1000 C:  23199 Min:      2 Act:    2 Avg:    2 Max:       4
+  T: 9 ( 3550) P:95 I:1000 C:  23199 Min:      2 Act:    3 Avg:    2 Max:       4
+  T:10 ( 3551) P:95 I:1000 C:  23199 Min:      2 Act:    3 Avg:    2 Max:       4
+  T:11 ( 3552) P:95 I:1000 C:  23199 Min:      2 Act:    3 Avg:    2 Max:       4
+  T:12 ( 3553) P:95 I:1000 C:  23199 Min:      2 Act:    2 Avg:    2 Max:       5
+  T:13 ( 3554) P:95 I:1000 C:  23199 Min:      2 Act:    3 Avg:    2 Max:       4
+  T:14 ( 3555) P:95 I:1000 C:  23199 Min:      2 Act:    2 Avg:    2 Max:       3
   ```
   
 
