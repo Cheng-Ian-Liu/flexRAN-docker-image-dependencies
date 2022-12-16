@@ -1,7 +1,7 @@
 # 0. Background
 
 The purpose of this document is to summarize all the host-level and K8s-level configurations we made to the platform to support Intel FlexRAN on-boarding.
-The document is modified based on Intel Open Source FlexRAN installation guide (https://github.com/intel/flexRAN-docker-image-dependencies), based on specific changes tailored for our environment.
+The document is modified based on Intel Open Source FlexRAN installation guide (https://github.com/intel/flexRAN-docker-image-dependencies), and added specific changes tailored for our environment.
 
 # 1. FlexRAN™ software reference stack
 
