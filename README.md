@@ -72,7 +72,7 @@ To enable the real-time beta kernel, run:
 pro enable realtime-kernel --beta
 ```
 
-Then reboot the server, and your kernel version should become RT kernal
+Then reboot the server, and your kernel version should become RT kernal. Notice that your RT kernel version may be newer given there are continuous newer RT kernel beta releases from Ubuntu
 
 ```
 root@eksa-du:/home/ec2-user# uname -ar
@@ -80,6 +80,7 @@ Linux eksa-du 5.15.0-1025-realtime #28-Ubuntu SMP PREEMPT_RT Fri Oct 28 23:19:16
 ```
 
 After the server is rebooted, install the following packages that will be used later when setting CPU core frequency
+Note: if your RT kernel version is newer than 5.15.0-1025, update the release version below accordingly
 
 ```
 sudo apt install linux-tools-5.15.0-1025-realtime
