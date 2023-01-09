@@ -812,16 +812,31 @@ Configure FEC and FVL SRIOV (example as below)
 $ modprobe vfio-pci
 $ modprobe uio
 $ insmod /opt/dpdk-kmods/linux/igb_uio/igb_uio.ko
-$ lspci | grep 0d5c
+$ lspci | grep acc
+c3:00.0 Processing accelerators: Intel Corporation Device 0d5c
+
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -s | grep 0d5c
+0000:c3:00.0 'Device 0d5c' unused=igb_uio,vfio-pci
 
 # bind accelerator PF
-# change the address according to your environment
-$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b igb_uio 0000:b1:00.0
-$ echo 0 > /sys/bus/pci/devices/0000:b1:00.0/max_vfs
-$ echo 2 > /sys/bus/pci/devices/0000:b1:00.0/max_vfs
+# change the pci address according to your environment
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b igb_uio 0000:c3:00.0
+$ echo 0 > /sys/bus/pci/devices/0000:c3:00.0/max_vfs
+$ echo 2 > /sys/bus/pci/devices/0000:c3:00.0/max_vfs
 
 # bind accelerator VF
-$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:b2:00.0
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -s
+
+Baseband devices using DPDK-compatible driver
+=============================================
+0000:c3:00.0 'Device 0d5c' drv=igb_uio unused=vfio-pci
+
+Other Baseband devices
+======================
+0000:c4:00.0 'Device 0d5d' unused=igb_uio,vfio-pci
+0000:c4:00.1 'Device 0d5d' unused=igb_uio,vfio-pci
+
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:c4:00.0
 
 # pf-bb-config (build and then config the accelerator)
 $ cd /opt
@@ -837,7 +852,10 @@ Tue Dec  6 04:47:54 2022:INFO:DDR Training completed in 1362 ms
 Tue Dec  6 04:47:54 2022:INFO:PF ACC100 configuration complete
 Tue Dec  6 04:47:54 2022:INFO:ACC100 PF [0000:c3:00.0] configuration complete!
 
+
 # configure fronthaul NIC
+# Note: change your pci address accordingly
+
 $ echo 0 > /sys/bus/pci/devices/0000:4b:00.0/sriov_numvfs
 $ echo 4 > /sys/bus/pci/devices/0000:4b:00.0/sriov_numvfs
 $ ip link set ens9f0 vf 0 mac 00:11:22:33:00:00
