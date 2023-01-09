@@ -356,15 +356,18 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   $ cp sriov /opt/cni/bin
   ```
   
-  - SRIVO Network Device Plugin image pull
+  - SRIVO Network Device Plugin git and image pull
 
-  
-  ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc)
   
   ```shell
   # get on the admin machine, where dockerd is running
   $ cd /root
   $ git clone https://github.com/intel/sriov-network-device-plugin
+  ```
+  
+   ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc)
+   
+  ```
   $ docker pull nfvpe/sriov-device-plugin
   ```
   
