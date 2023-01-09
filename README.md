@@ -318,6 +318,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
     4. Bind all VF with right drivers
     5. Create a resource config map
     6. Run SR-IOV Network Device Plugin (as daemonset), or restart it whenever you make changes to the configmap
+    
+
 
   - SR-IOV CNI plugin install
   
