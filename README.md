@@ -548,13 +548,14 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
   $ kubectl get node <your-k8s-worker-node-name> -o json | jq '.status.allocatable' 
   {
-    "cpu": "64",
+    "cpu": "62",
     "ephemeral-storage": "885476035962",
     "hugepages-1Gi": "32Gi",
     "hugepages-2Mi": "0",
+    "intel.com/intel_fec_5g": "1",
     "intel.com/intel_sriov_dpdk": "4",
     "intel.com/intel_sriov_netdevice": "4",
-    "memory": "97850364Ki",
+    "memory": "97850360Ki",
     "pods": "110"
   }
   ```
