@@ -794,6 +794,9 @@ $ ninja
 $ ninja install
 ```
 
+Note: now you can go back to the "DPDK binding" section above to do the DPDK binding part for the backhaul SR-IOV NIC testing. The section below is needed for Accelerator driver binding.
+
+
 Build igb_uio (for Accelerator PF driver binding purpose)
 
 ```shell
