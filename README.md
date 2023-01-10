@@ -892,7 +892,7 @@ Now you should be able to see all the K8s resources allocatable (e.g. SRIOV DPDK
 ```shell
 kubectl get node eksa-du -o json | jq '.status.allocatable'
 {
-  "cpu": "63",
+  "cpu": "62",
   "ephemeral-storage": "885476035962",
   "hugepages-1Gi": "32Gi",
   "hugepages-2Mi": "0",
@@ -918,19 +918,10 @@ input you username/password of your docker hub account
 $ docker pull intel/flexran_vdu:v22.07
 ```
 
-for internal user (intel PAE), they can use another way to download docker image from internal harbor: 
-login docker hub 
+Note: the above method did not work for me, and I got the FlexRAN docker image from Intel team directly
 
-```shell
-$ docker login amr-registry-pre.caas.intel.com
-```
-input your username/passward of your harbor account
 
-```shell
-$ docker pull amr-registry-pre.caas.intel.com/flexran/flexran_vdu:v22.07
-```
-
-## 3.6. Install flexRAN thru helm
+## 3.6. Install flexRAN
 
 Intel flexRAN provide helm chart or yaml files for a sample deployment of flexran test.
 If user is NDA customer of flexRAN, they can get those helm chart or yaml files from quarter by quarter release package.
@@ -944,11 +935,9 @@ apiVersion: v1
 kind: Pod
 metadata:
   labels:
-    app: flexran-dockerimage_release
-  name: flexran-dockerimage-release
+    app: flexran-binary-release
+  name: flexran-binary-release-cpu-mgmt
 spec:
-  nodeSelector:
-     testnode: worker1
   containers:
   - securityContext:
       privileged: false
@@ -957,23 +946,25 @@ spec:
           - IPC_LOCK
           - SYS_NICE
     command: [ "/bin/bash", "-c", "--" ]
-    args: ["sh docker_entry.sh -m timer ; cd /home/flexran/bin/nr5g/gnb/l1/; ./l1.sh -e ; top"]
+    args: ["sh docker_entry.sh -m timer ; top"]
     tty: true
     stdin: true
     env:
     - name: LD_LIBRARY_PATH
       value: /opt/oneapi/lib/intel64
-    image: amr-registry-pre.caas.intel.com/flexran/flexran_vdu:v22.07
+    image: 64.71.162.226:5000/flexran_vdu:22.07B23
     name: flexran-l1app
     resources:
       requests:
-        memory: "6Gi"
+        cpu: "30"
+        memory: "32Gi"
         intel.com/intel_fec_5g: '1'
-        hugepages-1Gi: 8Gi
+        hugepages-1Gi: 16Gi
       limits:
-        memory: "6Gi"
+        cpu: "30"
+        memory: "32Gi"
         intel.com/intel_fec_5g: '1'
-        hugepages-1Gi: 8Gi
+        hugepages-1Gi: 16Gi
     volumeMounts:
     - name: hugepage
       mountPath: /hugepages
@@ -981,7 +972,7 @@ spec:
       mountPath: /var/run/dpdk
       readOnly: false
     - name: tests
-      mountPath: /home/flexran/tests
+      mountPath: /root/flexran/tests
       readOnly: false
   - securityContext:
       privileged: false
@@ -990,21 +981,23 @@ spec:
           - IPC_LOCK
           - SYS_NICE
     command: [ "/bin/bash", "-c", "--" ]
-    args: ["sleep 10; sh docker_entry.sh -m timer ; cd /home/flexran/bin/nr5g/gnb/testmac/; ./l2.sh --testfile=icelake-sp/icxsp.cfg; top"]
+    args: ["sh docker_entry.sh -m timer ; top"]
     tty: true
     stdin: true
     env:
     - name: LD_LIBRARY_PATH
       value: /opt/oneapi/lib/intel64
-    image: amr-registry-pre.caas.intel.com/flexran/flexran_vdu:v22.07
+    image: 64.71.162.226:5000/flexran_vdu:22.07B23
     name: flexran-testmac
     resources:
       requests:
-        memory: "6Gi"
-        hugepages-1Gi: 4Gi
+        cpu: "4"
+        memory: "12Gi"
+        hugepages-1Gi: 8Gi
       limits:
-        memory: "6Gi"
-        hugepages-1Gi: 4Gi
+        cpu: "4"
+        memory: "12Gi"
+        hugepages-1Gi: 8Gi
     volumeMounts:
     - name: hugepage
       mountPath: /hugepages
@@ -1012,7 +1005,7 @@ spec:
       mountPath: /var/run/dpdk
       readOnly: false
     - name: tests
-      mountPath: /home/flexran/tests
+      mountPath: /root/flexran/tests
       readOnly: false
   volumes:
   - name: hugepage
@@ -1022,15 +1015,54 @@ spec:
     emptyDir: {}
   - name: tests
     hostPath:
-      path: "/home/tmp_flexran/tests"
+      path: "/home/ec2-user/tests"
 EOF  
   
 $ kubectl create -f /opt/flexran_timer_mode.yaml
 ```
 
-for timer mode, once the container created, corresponding timer mode test will be run up. And you can check POD status thru - "kubectl describe po pode-name".  
-You can also check the status of RAN service thru - "kubectl logs -f pode-name -c container-name"
-  
+Make sure the /tests folder is put under the target DU machine's home directory
+
+For timer mode, once the pod is created, you can log into the two containers (for L1 and L2 seperately) of the pods.
+
+```
+$ kubectl get pods
+NAME                              READY   STATUS    RESTARTS   AGE
+flexran-binary-release-cpu-mgmt   2/2     Running   0          3h37m
+```
+
+On the L1 container window:
+
+```
+$ kubectl exec -it flexran-binary-release-cpu-mgmt -c flexran-l1app /bin/bash
+$ cd flexran/bin/nr5g/gnb/l1/
+
+# first find out the cpu cores allocated for L1
+$ grep Cpus_allowed_list /proc/self/status
+
+# Note: modify phycfg_timer.xml <dpdkBasebandDevice>0000:c4:00.0</dpdkBasebandDevice> to env|grep INTEL value, also double check the <dpdkBasebandFecMode> and <dpdkIovaMode> values are both 1.
+# also modify the <!-- CPU Binding to Application Threads --> section of the phycfg_timer.xml file, to assign 3 cores from the cpu core allow list for FlexRAN system purpose.
+
+# Then start the L1 process
+$ ./l1.sh -e
+```
+
+On the L2 container window:
+
+```
+$ kubectl exec -it flexran-binary-release-cpu-mgmt -c flexran-testmac /bin/bash 
+$ cd flexran/bin/nr5g/gnb/testmac
+
+# Note: modify the icxsp_mu0_10mhz_4x4_hton.cfg file, in the "setcore 0x7e" section, make sure the core mask falls into the cpu allowed list of L1 container, and also does not overlap with FlexRAN system cores defined in the L1 container phycfg_timer.xml file above
+
+# Then start the L2 process
+$ ./l2.sh –testfile=icelake-sp/icxsp_mu0_10mhz_4x4_hton.cfg
+```
+
+All the test results are printed on the screen, and also saved into the local file of L1 container: /flexran/bin/nr5g/gnb/l1/l1_mlog_stats.txt
+
+
+
 ### 3.6.2. Example yaml file for xran mode test
 
 ```shell
