@@ -506,7 +506,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   - SRIOV Device Plugin configuration  
   
-  on the admin machine, within the gitcloned folder the sriov-network-device-plugin, below is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  (more configuration examples can be found in sriov-device-plugin github page)
+  on the admin machine, within the gitcloned folder the sriov-network-device-plugin, below is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  (more configuration examples can be found in sriov-device-plugin github page). Device ID can be found from the dpdk-bind.py -s output
   
   Note: the acc100 device VF configuration step is shown in the later section of this doc. Once VF is enabled on ACC100, use the VF's device ID 0d5d instead of the PF's device ID 0d5c
 
