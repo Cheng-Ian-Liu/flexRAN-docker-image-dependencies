@@ -56,6 +56,8 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 EKS-A install completed with Generic Ubuntu OS up and running
 
+NIC driver and firmware are updated according to Intel's recommendation: Intel FlexRAN Document Number: 611268-13.0
+
 ### 3.3.0. RT kernel install
 
 Follow this article to install the RT kernel for Ubuntu 22.04, beta version: https://ubuntu.com/blog/real-time-ubuntu-released
