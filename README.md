@@ -409,6 +409,14 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   ```
 
    This method requires the creation of VFs each time the node resets. This can be handled automatically by placing the above command in a script that runs on startup such as /etc/rc.local, or via systemd service
+   
+   [Optional] If vlan configuration is needed on the VFs, then use similar commands below:
+   
+   ```
+   ip link set enp81s0f0 vf 0 mac 00:11:22:33:00:00 vlan 26 trust on
+   ip link set enp81s0f0 vf 1 mac 00:11:22:33:00:10 vlan 26 trust on
+   ip link set enp81s0f2 vf 0 mac 00:11:22:33:02:00 vlan 27 trust on
+   ```
   
   
   - DPDK binding 
