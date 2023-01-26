@@ -1527,8 +1527,21 @@ $ kubectl create -f /opt/flexran_xran_mode.yaml
 
 For xran mode, once the container created, corresponding xran mode test will not be run up.
 You need enter the pod and execute the test manually. the steps are the same as the one without core pining 
+
+## 3.8. ISV vDU on-boarding
   
-## 3.8. Legal Disclaimer
+### PTP
+
+Before enabling PTP service, need to disable the NTP service in the system
+  
+```
+systemctl status chronyd
+systemctl stop chronyd
+systemctl status chronyd
+```
+  
+  
+## 3.9. Legal Disclaimer
 
 For GPL/LGPL open source libs/components used by flexran docker image at run time.
 User can find the used version in below git hub repo: <https://github.com/intel/flexRAN-docker-image-dependencies>
