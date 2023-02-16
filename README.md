@@ -58,6 +58,16 @@ EKS-A install completed with Generic Ubuntu OS up and running
 
 NIC driver and firmware are updated according to Intel's recommendation: Intel FlexRAN Document Number: 611268-13.0
 
+(1) For E810 NIC (COTS version), here are target versions to upgrade/downgrade to:
+ICE Driver Version: 1.8.8.
+https://www.intel.com/content/www/us/en/download/19630/729615/intel-network-adapter-driver-for-e810-series-devices-under-linux.html
+
+NVM Firmware Version: 3.20
+https://www.intel.com/content/www/us/en/download/19626/727313/non-volatile-memory-nvm-update-utility-for-intel-ethernet-network-adapters-e810-series-linux.html
+
+(2) For E810 NIC (Server OEM version), need to get the corresponding firmware version from the Server OEM. Below is an example for Dell:
+https://www.dell.com/support/home/en-us/drivers/driversdetails?driverid=25ffj#:~:text=Linux%20Update%20Package%20Installation%3A
+
 ### 3.3.0. RT kernel install
 
 Follow this article to install the RT kernel for Ubuntu 22.04, beta version: https://ubuntu.com/blog/real-time-ubuntu-released
