@@ -554,6 +554,65 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
      }
   EOF
   
+  # Here is another example (in Mavenir lab) where you have multiple NICs, and each NIC needs to be configured with both DPDK and non-DPDK VFs.
+  
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sriovdp-config
+  namespace: kube-system
+data:
+  config.json: |
+    {
+        "resourceList": [{
+                "resourceName": "intel_sriov_netdevice_fh",
+                "selectors": {
+                    "vendors": ["8086"],
+                    "devices": ["1889"],
+                    "drivers": ["iavf"],
+                    "pfNames": ["enp81s0f0"]
+                }
+            },
+            {
+                "resourceName": "intel_sriov_dpdk_fh",
+                "selectors": {
+                    "vendors": ["8086"],
+                    "devices": ["1889"],
+                    "drivers": ["vfio-pci"],
+                    "pfNames": ["enp81s0f0"]
+                }
+            },
+            {
+                "resourceName": "intel_srio_netdevice_mh",
+                "selectors": {
+                    "vendors": ["8086"],
+                    "devices": ["1889"],
+                    "drivers": ["iavf"],
+                    "pfNames": ["enp81s0f2"]
+                }
+            },
+            {
+                "resourceName": "intel_sriov_dpdk_mh",
+                "selectors": {
+                    "vendors": ["8086"],
+                    "devices": ["1889"],
+                    "drivers": ["vfio-pci"],
+                    "pfNames": ["enp81s0f2"]
+                }
+            },
+            {
+                "resourceName": "intel_fec_5g",
+                "deviceType": "accelerator",
+                "selectors": {
+                    "vendors": ["8086"],
+                    "devices": ["0d5d"],
+                    "drivers": ["vfio-pci"]
+                }
+            }
+        ]
+    }
+  
+  
   $ kubectl create -f deployments/configMap.yaml  
   $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
   $ kubectl get node <your-k8s-worker-node-name> -o json | jq '.status.allocatable' 
@@ -821,6 +880,8 @@ $ make
 ```
 
 Configure FEC and FVL SRIOV (example as below)
+Note: the kernel module loading needs to be re-do everytime the server rebooted
+
 
 ```shell
 $ modprobe vfio-pci
