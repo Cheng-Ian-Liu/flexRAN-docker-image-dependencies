@@ -612,7 +612,7 @@ data:
         ]
     }
   
-  Then you create the configmap (some version of sriov-dp folder structure maybe slightly change, but the configmap and daemonset files are two key files)
+ # Then you create the configmap (some version of sriov-dp folder structure maybe slightly change, but the configmap and daemonset files are two key files)
   
   $ kubectl create -f deployments/configMap.yaml  
   $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
