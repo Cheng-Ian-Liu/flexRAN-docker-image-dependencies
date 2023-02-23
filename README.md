@@ -56,7 +56,7 @@ If you are new entry users and just want to do a quick try, please follow below 
 
 EKS-A install completed with Generic Ubuntu OS up and running. Follow this EKS-A documentation: https://anywhere.eks.amazonaws.com/docs/getting-started/production-environment/baremetal-getstarted/ 
 
-
+Server BIOS settings follow server OEM and Intel's recommendation (Doc: 640685, Rev 1.4)
 
 NIC driver and firmware are updated according to Intel's recommendation: Intel FlexRAN Document Number: 611268-13.0
 
