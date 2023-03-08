@@ -18,7 +18,7 @@ Server BIOS, Firmware settings are out of scope of this blog, but please follow 
 
 Follow this article to install the RT kernel for Ubuntu 22.04, beta version: https://ubuntu.com/blog/real-time-ubuntu-released
 
-You need Ubuntu Pro subscription in order to install RT kernel patch. To attach your machine to a Pro subscription, please run:
+A Ubuntu Pro subscription is needed in order to install RT kernel patch. To attach your machine to a Pro subscription, please run:
 
 ```
 pro attach <free token> 
@@ -118,7 +118,7 @@ $ apt install msr-tools
 $ cpupower frequency-set -g performance
 ```
 
-Set cpu core frequency to 2.5GHz (check with your CPU provider on the ideal CPU frequency to set)
+Set cpu core frequency to 2.5GHz (check with your CPU provider on the ideal CPU frequency to set according to your CPU model)
 
 ```shell
 $ wrmsr -a 0x199 0x1900
@@ -142,7 +142,7 @@ Obtain the kubeconfig file of the target cluster, and execute the commands below
 
 Below plugins are required:
 
-- multus:
+### 3.1.1 multus:
 
 Clone Multus CNI repo
 
@@ -261,19 +261,18 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
           RX bytes:13720 (13.3 KiB)  TX bytes:928 (928.0 B)
 ```
 
-- SRIOV (cni and network device plugin):
+### 3.1.2 SRIOV (cni and network device plugin):
   
   Follow SRIOV instruction on SRIOV GitHub - <https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin>.
   
-  Workflow:
+  Here is the high-level workflow:
     1. Install SR-IOV CNI and SR-IOV Network Device Plugin
     2. (For accelerator only) Load device's (Physical function if it is SR-IOV capable) kernel module and bind the driver to the PF
     3. Create required Virtual functions
     4. Bind all VF with right drivers
     5. Create a resource config map
-    6. Run SR-IOV Network Device Plugin (as daemonset), or restart it whenever you make changes to the configmap
+    6. Run SR-IOV Network Device Plugin (as daemonset), or restart it whenever you make changes to the configmap of SR-IOV Network Device Plugin
     
-
 
   - SR-IOV CNI plugin install
   
@@ -318,19 +317,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   $ cd /root
   $ git clone https://github.com/intel/sriov-network-device-plugin
   ```
-  
-   ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc)
-   
-  ```
-  $ docker pull nfvpe/sriov-device-plugin
-  ```
-  
-  ```
-  # On the target EKS-A node pull the image down to local cache also
-  root@eksa-du:# crictl pull nfvpe/sriov-device-plugin
-  root@eksa-du:# crictl image ls
-  ```
-  
+
   - SRIOV VF configuration
   
   Get on the target EKS-A machine
@@ -339,7 +326,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   First select a compatible NIC on which to create VFs and record its name (shown as PF_NAME below).
 
-  To create 8 virtual functions run: 
+  To create 8 virtual functions on the NIC port for backhaul/midhaul traffic, run: 
   (Note: do not create the SR-IOV VFs on the Host OAM NIC port, which would cause the loss of OAM connectivity)
 
   `echo 8 > /sys/class/net/${PF_NAME}/device/sriov_numvfs`
@@ -370,16 +357,42 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
    ip link set enp81s0f2 vf 0 mac 00:11:22:33:02:00 vlan 27 trust on
    ```
   
-  
   - DPDK binding 
 
   Before we apply SRIOV device plugin, we need to install DPDK on the target machine host, and bind VF devices with DPDK drivers.
   
-  Theoretically, we can just move the dpdk-devbind.py script over to the target machine, without installing the whole DPDK package on the target machine. But for now, we can follow the procedure in the Environment Prep section to install DPDK. Finish at least the DPDK package install (until the ninja install)
+  Theoretically, we can just move the dpdk-devbind.py script over to the target machine, without installing the whole DPDK package on the target machine. But for testing/troubleshooting purpose, let's install the DPDK package as described below.
+
+Install DPDK pre-req packages
+
+```
+$ apt install libnuma-dev libhugetlbfs-dev build-essential cmake meson pkgconf python3-pyelftools
+```
+
+Download DPDK
+
+```
+# get on the target EKS-A machine
+$ cd /opt/  
+$ wget http://static.dpdk.org/rel/dpdk-21.11.tar.xz  
+$ tar xf /opt/dpdk-21.11.tar.xz
+```
+
+Build and install DPDK
+
+Note: this step can take 10mins, so run it in a tmux session if possible
+
+```shell
+$ cd /opt/dpdk_21.11
+$ meson build
+$ cd build
+$ ninja
+$ ninja install
+```
+
+Now you can use the usertools (i.e. dpdk-devbind.py) that comes with DPDK package to check device drivers in use, and bind VF drivers
   
-  Then you can use the usertools that comes with DPDK package to check device drivers in use, and bind VF drivers
-  
-  Check current devices and drivers:
+  Check current devices and drivers: (below is just an example, and your system output may vary)
 
   ```
   root@eksa-du:/opt/dpdk-21.11/usertools# dpdk-devbind.py -s
@@ -453,14 +466,97 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   Notice: 0000:18:10.7 already bound to driver ixgbevf, skipping
   ```
   
+
+- Configure FEC and Fronthaul NIC SRIOV (example as below)
+
+Build igb_uio (for Accelerator PF driver binding purpose)
+
+```shell
+$ cd /opt
+$ git clone http://dpdk.org/git/dpdk-kmods
+$ cd dpdk-kmods/linux/igb_uio
+$ make
+```
+
+Note: the kernel module loading needs to be re-do everytime the server rebooted, therefore, it is recommend to persist these configurations in a service
+
+```shell
+$ modprobe vfio-pci
+$ modprobe uio
+$ insmod /opt/dpdk-kmods/linux/igb_uio/igb_uio.ko
+$ lspci | grep acc
+c3:00.0 Processing accelerators: Intel Corporation Device 0d5c
+
+# note: the lspci command is how you get the device ID (i.e. 0d5c) and its PCI address (i.e. c3:00.0), which are needed in following configurations 
+
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -s | grep 0d5c
+0000:c3:00.0 'Device 0d5c' unused=igb_uio,vfio-pci
+
+# bind accelerator PF
+# change the pci address according to your environment
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b igb_uio 0000:c3:00.0
+$ echo 0 > /sys/bus/pci/devices/0000:c3:00.0/max_vfs
+$ echo 2 > /sys/bus/pci/devices/0000:c3:00.0/max_vfs
+
+# bind accelerator VF
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -s
+
+Baseband devices using DPDK-compatible driver
+=============================================
+0000:c3:00.0 'Device 0d5c' drv=igb_uio unused=vfio-pci
+
+Other Baseband devices
+======================
+0000:c4:00.0 'Device 0d5d' unused=igb_uio,vfio-pci
+0000:c4:00.1 'Device 0d5d' unused=igb_uio,vfio-pci
+
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:c4:00.0
+
+# pf-bb-config (build and then config the accelerator)
+$ cd /opt
+$ git clone https://github.com/intel/pf-bb-config.git
+$ cd /opt/pf-bb-config
+$ ./build.sh
+$ ./pf_bb_config ACC100 -c acc100/acc100_config_vf_5g.cfg
+== pf_bb_config Version v22.07-0-g7843e91 ==
+Tue Dec  6 04:47:52 2022:INFO:Queue Groups: 4 5GUL, 4 5GDL, 0 4GUL, 0 4GDL
+Tue Dec  6 04:47:52 2022:INFO:Configuration in VF mode
+Tue Dec  6 04:47:53 2022:INFO: ROM version MM 99ANA5
+Tue Dec  6 04:47:54 2022:INFO:DDR Training completed in 1362 ms
+Tue Dec  6 04:47:54 2022:INFO:PF ACC100 configuration complete
+Tue Dec  6 04:47:54 2022:INFO:ACC100 PF [0000:c3:00.0] configuration complete!
+
+
+# configure fronthaul NIC
+# Note: change your pci address accordingly
+
+$ echo 0 > /sys/bus/pci/devices/0000:4b:00.0/sriov_numvfs
+$ echo 4 > /sys/bus/pci/devices/0000:4b:00.0/sriov_numvfs
+$ ip link set ens9f0 vf 0 mac 00:11:22:33:00:00
+$ ip link set ens9f0 vf 1 mac 00:11:22:33:00:10
+$ ip link set ens9f0 vf 2 mac 00:11:22:33:00:20
+$ ip link set ens9f0 vf 3 mac 00:11:22:33:00:30
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -s
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:02.0 0000:4b:02.1
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:02.2 0000:4b:02.3
+$ echo 0 > /sys/bus/pci/devices/0000:4b:00.1/sriov_numvfs
+$ echo 4 > /sys/bus/pci/devices/0000:4b:00.1/sriov_numvfs
+$ modprobe vfio-pci
+$ ip link set ens9f1 vf 2 mac 00:11:22:33:00:21
+$ ip link set ens9f1 vf 3 mac 00:11:22:33:00:31
+$ ip link set ens9f1 vf 0 mac 00:11:22:33:00:01
+$ ip link set ens9f1 vf 1 mac 00:11:22:33:00:11
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.0 0000:4b:0a.1
+$ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.2 0000:4b:0a.3
+```
+
   Now you are ready to apply SRIOV device plugin configuration and start the dp_daemonset
-  
   
   - SRIOV Device Plugin configuration  
   
-  on the admin machine, within the gitcloned folder the sriov-network-device-plugin, below is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use lspci -nn in the target machine to find out):  (more configuration examples can be found in sriov-device-plugin github page). Device ID can be found from the dpdk-bind.py -s output
-  
-  Note: the acc100 device VF configuration step is shown in the later section of this doc. Once VF is enabled on ACC100, use the VF's device ID 0d5d instead of the PF's device ID 0d5c
+On the admin machine, within the gitcloned folder the sriov-network-device-plugin, below is an example to cofigure SRIOV DP configure map, modify the device name according to your target machine configuration (use "lspci -nn" and "dpdk-bind.py -s" output in the target machine to find out the device ID information needed in the configMap configuration below).
+
+More configuration examples can be found in sriov-device-plugin github page: https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin 
 
  ```
  $ cd sriov-network-device-plugin 
@@ -506,7 +602,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
      }
   EOF
   
-  # Here is another example (in Mavenir lab) where you have multiple NICs, and each NIC needs to be configured with both DPDK and non-DPDK VFs.
+  # Here is another example where you have multiple NICs, and each NIC needs to be configured with both DPDK and non-DPDK VFs.
   
 apiVersion: v1
 kind: ConfigMap
@@ -565,6 +661,8 @@ data:
     }
   
  # Then you create the configmap (some version of sriov-dp folder structure maybe slightly change, but the configmap and daemonset files are two key files)
+ 
+ # Now you should be able to see all the K8s resources allocatable (e.g. SRIOV DPDK, non-DPDK/net-device, Accelerator, HugePage Mem, etc.)
   
   $ kubectl create -f deployments/configMap.yaml  
   $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
@@ -581,7 +679,14 @@ data:
     "pods": "110"
   }
   ```
-  
+
+Note: everytime there is SR-IOV VF configuration changes on the host level, you need to re-apply the sriov-dp configmap.yaml and re-create the sriov-dp daemonset (example below) in order for K8s to pick up the updated resources and show it in the K8s resource.
+
+```
+kubectl delete -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
+kubectl apply -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
+```
+
   - Test SRIOV Network Device Plugin
   
   On the admin machinve, create two Network Attachment Definitions for sriov-netdevice and sriov-dpdk resources
@@ -602,11 +707,11 @@ data:
     "name": "sriov-network",
     "ipam": {
       "type": "host-local",
-      "subnet": "10.56.217.0/24",
+      "subnet": "x.x.x.x/24",
       "routes": [{
         "dst": "0.0.0.0/0"
       }],
-      "gateway": "10.56.217.1"
+      "gateway": "x.x.x.x"
     }
   }'
   EOF
@@ -636,7 +741,7 @@ data:
   
   Check the NADs are created
   ```
-  sys-1019-admin@sys1019admin-CSE-515-R407:~/EKS-A-install/sriov$ kubectl get net-attach-def -A
+  $ kubectl get net-attach-def -A
   NAMESPACE   NAME               AGE
   default     sriov-dpdk1        4s
   default     sriov-netdevice1   11s
@@ -670,8 +775,6 @@ data:
   
   kubectl create –f pod-sriov-test.yaml
   ```
-  
-  Note: currently this pod test cannot be completed due to the eno2 interface is not connected in the SMC dev lab setup. Will test it once the setup is moved to permanent lab with 2nd NIC port connectivity. In the meantime, will check with Intel to get the procedure to enable SR-IOV on OAM NIC port.
   
   
   - Native CPU Manager 
@@ -928,21 +1031,6 @@ kubectl get node eksa-du -o json | jq '.status.allocatable'
 }
 ```
 
-
-## 3.5. flexran docker image prepare
-
-login docker hub (for external user)
-
-```shell
-$ docker login 
-```
-input you username/password of your docker hub account 
-
-```shell
-$ docker pull intel/flexran_vdu:v22.07
-```
-
-Note: the above method did not work for me, and I got the FlexRAN docker image from Intel team directly
 
 
 ## 3.6. Install flexRAN
