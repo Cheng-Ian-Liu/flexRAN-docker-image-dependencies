@@ -1,80 +1,24 @@
 # 0. Background
 
-The purpose of this document is to summarize all the host-level and K8s-level configurations we made to the platform to support Intel FlexRAN on-boarding.
-The document is modified based on Intel Open Source FlexRAN installation guide (https://github.com/intel/flexRAN-docker-image-dependencies), and added specific changes tailored for our environment.
+The purpose of this document is to summarize all the host-level and K8s-level configurations we made to the platform to support O-RAN DU workload on-boarding.
 
-# 1. FlexRAN™ software reference stack
+# 1. Preparation
 
-Intel provides a vRAN reference architecture in the form of the FlexRAN™ software reference stack,
-which demonstrates how to optimize VDU software implementations using Intel® C++ class libraries,
-leveraging the Intel® Advanced Vector Extensions 512 (Intel® AVX-512) instruction set.
-The multi-threaded design allows a single VDU software implementation to scale to meet the requirements of multiple deployment scenarios,
-scaling from single small cells deployments, optimized D-RAN deployments or servicing large number of 5G cells in C-RAN pooled deployments.
-As a SW implementation, it is also capable of supporting LTE, 5G narrow band and 5G massive MIMO deployments all from the same SW stack using the O-RAN 7.2x split.
-The FlexRAN™ software reference solution framework by Intel is shown in below diagram:  
-
-![image](https://user-images.githubusercontent.com/94888960/199504629-afdf2518-f328-403d-8155-c38364d1d593.png)
-
-# 2. FlexRAN™ docker image
-
-Since 2022, intel FlexRAN team is publishing docker image to docker hub. The purpose is to make more and more potential users can easily enter the door and play the game.
-The docker image include only binaries, runtime dependency libraries, configure files and several typical cases. If downloader had already been a NDA customer of Intel,
-They can get corresponding source code, more test cases and supports from Intel FlexRAN team.
-If you are new entry users and just want to do a quick try, please follow below guides. if you have further intention, please contact Intel FlexRAN Marketing team.  
-
-# 3. User Guide
-
-## 3.1. HW list
-
-|   Category   |                                    Icelake – SP (Intel Reference)                                  |     Icelake – SP ( Lab Testing)   |
-| :----------: | :------------------------------------------------------------------------------------------------: | :-------------------------------: |
-|    Board     |                                  Intel Server Board M50CYP2SBSTD                                   |   Dell XR11/Supermicro Servers    |
-|     CPU      |                              1x Intel® Xeon® Gold 6338N CPU @2.20 GHz                              |              Same CPU             |
-|    Memory    |                                   8x16GB DDR4 3200 MHz (Samsung)                                   |           128GB RAM (SMC)         | 
-|   Storage    |                                     960 Gb SSD M.2 SATA 6Gb/s                                      |          960 GB NVMe (SMC)        |
-|   Chassis    |                                   2 U Rackmount Server Enclosure                                   |   Dell XR11/Supermicro Servers    |
-|     NIC1     |                             1x Fortville NIC X722 Base-T(LoM to CPU-0)                             |   Intel I350 (SMC)/               |
-|     NIC2     | 1× Fortville 40 Gbe Ethernet PCIe XL710-QDA2 Dual Port QSFP+<br>(PCIe Add-in-card direct to CPU-0) |   Intel X550T (SMC)/              |
-| Baseband dev |      Mount Bryce Card (acc100) to CPU-0,<br> Optional, use software mode only if not present       |   Mount Bryce Card (acc100)       |
-
-## 3.2. SW list
-
-|  Category   |        Components        |           Details (FlexRAN Reference)           |            Details (Lab Testing)                |
-| :---------: | :----------------------: | :---------------------------------------------: | :---------------------------------------------: |
-|  Firmware   |           IFWI           |    Includes BIOS, BMC, ME as well as FRUSDR.    |  Dell/Supermicro BIOS/BMC settings (to be add)  |          
-|             |     Fortville XL710      |            8.20 0x8000a051 1.2879.0             |                  To be added                    |
-|     OS      |       Ubuntu 22.04       | Ubuntu Server 22.04 Realtime kernel 5.15.0-1009 |Ubuntu Server 22.04 Realtime kernel 5.15.0-1025  |
-|   Drivers   |   i40e for x700 series   |      Use the version comes with rt-5.15.0       |                  To be added                    |
-| Cloudnative |        kubernetes        |                     1.22.1                      |            v1.23.13-eks-6022eca (beta)          |
-|             |    Container runtime     |                  Docker 0.19.0                  |           containerd://1.5.9-0ubuntu3           |
-|   FlexRAN   |  FlexRAN 22.07 pacakge   |                      22.07                      |                     same                        |
-|  Toolchain  | Intel oneAPI Base Tookit |                  2022.1.2.146                   |                     same                        |
-|    DPDK     |       DPDK release       |                      22.11                      |                     same                        |  
-
-
-## 3.3. Prequisition
+## 1.1. Prequisition
 
 EKS-A install completed with Generic Ubuntu OS up and running. Follow this EKS-A documentation: https://anywhere.eks.amazonaws.com/docs/getting-started/production-environment/baremetal-getstarted/ 
 
-Server BIOS settings follow server OEM and Intel's recommendation (Doc: 640685, Rev 1.4)
+## 1.2. BIOS/Firmware Configurations
 
-NIC driver and firmware are updated according to Intel's recommendation: Intel FlexRAN Document Number: 611268-13.0
+Server BIOS, Firmware settings are out of scope of this blog, but please follow your server OEM's recommendations to meet the real-time requirements.
 
-(1) For E810 NIC (COTS version), here are target versions to upgrade/downgrade to:
-ICE Driver Version: 1.8.8.
-https://www.intel.com/content/www/us/en/download/19630/729615/intel-network-adapter-driver-for-e810-series-devices-under-linux.html
+# 2. Host OS Configuration
 
-NVM Firmware Version: 3.20
-https://www.intel.com/content/www/us/en/download/19626/727313/non-volatile-memory-nvm-update-utility-for-intel-ethernet-network-adapters-e810-series-linux.html
-
-(2) For E810 NIC (Server OEM version), need to get the corresponding firmware version from the Server OEM. Below is an example for Dell:
-https://www.dell.com/support/home/en-us/drivers/driversdetails?driverid=25ffj#:~:text=Linux%20Update%20Package%20Installation%3A
-
-### 3.3.0. RT kernel install
+## 2.1. RT kernel install
 
 Follow this article to install the RT kernel for Ubuntu 22.04, beta version: https://ubuntu.com/blog/real-time-ubuntu-released
 
-To attach your personal machine to a Pro subscription, please run:
+You need Ubuntu Pro subscription in order to install RT kernel patch. To attach your machine to a Pro subscription, please run:
 
 ```
 pro attach <free token> 
@@ -86,7 +30,7 @@ To enable the real-time beta kernel, run:
 pro enable realtime-kernel --beta
 ```
 
-Then reboot the server, and your kernel version should become RT kernal. Notice that your RT kernel version may be newer given there are continuous newer RT kernel beta releases from Ubuntu
+Then reboot the server, and your kernel version should become RT kernal. Notice that your RT kernel version may be newer given there are continuous newer RT kernel beta releases from Ubuntu RT community
 
 ```
 root@eksa-du:/home/ec2-user# uname -ar
@@ -101,7 +45,7 @@ sudo apt install linux-tools-5.15.0-1025-realtime
 sudo apt install linux-cloud-tools-5.15.0-1025-realtime
 ```
 
-### 3.3.1. RT kernel configuration
+## 2.2. RT kernel configuration
 
 Install TuneD:
 
@@ -117,7 +61,7 @@ Add following line to the end of this file
 echo "export tuned_params"
 ```
 
-Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores/64vCores CPU, exclude 0 and 32 as sibiling vCores for house keeping purpose)
+Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores/64vCores CPU, exclude 0 and 32 as sibiling vCores for house keeping purpose). You need to change the core ID according to the number of CPU Cores in your server.
 
 ```shell
 isolated_cores=1-31,33-63
@@ -142,9 +86,8 @@ $ grep tuned_params= /boot/grub/grub.cfg
 set tuned_params="skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll"
 ```
 
-The other parameters of this set of best known configuration can be simply added in /etc/default/grub as below:
+The other parameters of this set of best known configuration can be simply added in /etc/default/grub as an example below:
 
-Note: in the SMC lab system
 
 ```shell
 GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll"
@@ -158,9 +101,7 @@ $ sudo update-grub
 $ sudo reboot
 ```
 
-Reboot the server, and check the kernel parameter, which should look like:
-
-Note: in the SMC lab system
+Reboot the server, and check the kernel parameter, which should look like below (and your system may have different core configurations):
 
 ```shell
 root@eksa-du:/home/ec2-user# cat /proc/cmdline
@@ -168,21 +109,20 @@ BOOT_IMAGE=/boot/vmlinuz-5.15.0-1025-realtime root=UUID=b18bef28-24eb-4b61-836a-
 ```
 
 
-### 3.3.2. Configure the CPU Frequency and cstate
+## 2.3. Configure the CPU Frequency and cstate
 
-Further improve the deterministic and power efficiency
+Further improve the deterministic and power efficiency by configuring CPU frequency and disable C-State
 
 ```shell
 $ apt install msr-tools
 $ cpupower frequency-set -g performance
 ```
 
-Set cpu core frequency to 2.5GHz (confirmed with Intel that 2.5GHz is okey for Intel(R) Xeon(R) Gold 6338N CPU @ 2.20GHz CPU)
+Set cpu core frequency to 2.5GHz (check with your CPU provider on the ideal CPU frequency to set)
 
 ```shell
 $ wrmsr -a 0x199 0x1900
 ```
-
 
 Set cpu uncore (i.e. 0x620) to fixed – maximum allowed. Disable c6 and c1e
 
@@ -192,11 +132,11 @@ $ cpupower idle-set -d 3
 $ cpupower idle-set -d 2
 ```
 
-### 3.3.3. Kubernetes installation
 
-This section is removed, as it is handled by EKS-A installation
 
-### 3.3.4. Kubernetes plugins installation
+# 3. Kubernetes Layer Configurations
+
+## 3.1. Kubernetes plugins installation
 
 Obtain the kubeconfig file of the target cluster, and execute the commands below to install additional K8s plugins
 
