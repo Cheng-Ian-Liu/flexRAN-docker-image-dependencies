@@ -265,7 +265,8 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   Follow SRIOV instruction on SRIOV GitHub - <https://github.com/k8snetworkplumbingwg/sriov-network-device-plugin#sr-iov-network-device-plugin>.
   
-  Here is the high-level workflow:
+  - High-level workflow:
+  
     1. Install SR-IOV CNI and SR-IOV Network Device Plugin
     2. (For accelerator only) Load device's (Physical function if it is SR-IOV capable) kernel module and bind the driver to the PF
     3. Create required Virtual functions
