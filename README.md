@@ -457,6 +457,85 @@ Now you can use the usertools (i.e. dpdk-devbind.py) that comes with DPDK packag
   
   Re-run the dpdk-devbind.py -s command should show the VFs are binded with DPDP compatible drivers (i.e. vfio-pci)
   
+  Example output below
+
+  ```
+$ dpdk-devbind.py -s
+
+Network devices using DPDK-compatible driver
+============================================
+0000:18:11.1 'X550 Virtual Function 1565' drv=vfio-pci unused=ixgbevf
+0000:18:11.3 'X550 Virtual Function 1565' drv=vfio-pci unused=ixgbevf
+0000:18:11.5 'X550 Virtual Function 1565' drv=vfio-pci unused=ixgbevf
+0000:18:11.7 'X550 Virtual Function 1565' drv=vfio-pci unused=ixgbevf
+
+Network devices using kernel driver
+===================================
+0000:18:00.0 'Ethernet Controller 10G X550T 1563' if=eno1 drv=ixgbe unused=vfio-pci *Active*
+0000:18:00.1 'Ethernet Controller 10G X550T 1563' if=eno2 drv=ixgbe unused=vfio-pci
+0000:18:10.1 'X550 Virtual Function 1565' if=eno2v0 drv=ixgbevf unused=vfio-pci
+0000:18:10.3 'X550 Virtual Function 1565' if=eno2v1 drv=ixgbevf unused=vfio-pci
+0000:18:10.5 'X550 Virtual Function 1565' if=eno2v2 drv=ixgbevf unused=vfio-pci
+0000:18:10.7 'X550 Virtual Function 1565' if=eno2v3 drv=ixgbevf unused=vfio-pci
+0000:19:00.0 'I350 Gigabit Network Connection 1521' if=enp25s0f0 drv=igb unused=vfio-pci
+0000:19:00.1 'I350 Gigabit Network Connection 1521' if=enp25s0f1 drv=igb unused=vfio-pci
+0000:19:00.2 'I350 Gigabit Network Connection 1521' if=eno3 drv=igb unused=vfio-pci
+0000:19:00.3 'I350 Gigabit Network Connection 1521' if=eno4 drv=igb unused=vfio-pci
+
+Baseband devices using DPDK-compatible driver
+=============================================
+0000:c4:00.0 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.1 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.2 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.3 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.4 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.5 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.6 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:00.7 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.0 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.1 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.2 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.3 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.4 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.5 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.6 'Device 0d5d' drv=vfio-pci unused=
+0000:c4:01.7 'Device 0d5d' drv=vfio-pci unused=
+
+Baseband devices using kernel driver
+====================================
+0000:c3:00.0 'Device 0d5c' drv=pci-pf-stub unused=vfio-pci
+
+No 'Crypto' devices detected
+============================
+
+DMA devices using kernel driver
+===============================
+0000:00:01.0 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.1 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.2 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.3 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.4 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.5 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.6 'Device 0b00' drv=ioatdma unused=vfio-pci
+0000:00:01.7 'Device 0b00' drv=ioatdma unused=vfio-pci
+
+No 'Eventdev' devices detected
+==============================
+
+No 'Mempool' devices detected
+=============================
+
+No 'Compress' devices detected
+==============================
+
+No 'Misc (rawdev)' devices detected
+===================================
+
+No 'Regex' devices detected
+===========================
+  ```
+  
+  
   Bind the top four VFs of eno2 to ixgbevf (default vf driver, so there should be no change):
   
   ```
