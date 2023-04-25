@@ -83,7 +83,7 @@ pro attach <free token>
 To enable the real-time beta kernel, run:
 
 ```
-pro enable realtime-kernel --beta
+pro enable realtime-kernel
 ```
 
 Then reboot the server, and your kernel version should become RT kernal. Notice that your RT kernel version may be newer given there are continuous newer RT kernel beta releases from Ubuntu
