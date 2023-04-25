@@ -61,7 +61,7 @@ Server BIOS settings follow server OEM and Intel's recommendation (Doc: 640685, 
 NIC driver and firmware are updated according to Intel's recommendation: Intel FlexRAN Document Number: 611268-13.0
 
 (1) For E810 NIC (COTS version), here are target versions to upgrade/downgrade to:
-ICE Driver Version: 1.8.8.
+ICE Driver Version: 1.8.8. (NOTE: do the driver update/install after RT kernel enablement, since it is kernel dependent)
 https://www.intel.com/content/www/us/en/download/19630/729615/intel-network-adapter-driver-for-e810-series-devices-under-linux.html
 
 NVM Firmware Version: 3.20
