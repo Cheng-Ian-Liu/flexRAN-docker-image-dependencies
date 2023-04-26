@@ -374,12 +374,12 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
 
   
   ```shell
-  # get on the admin machine, where dockerd is running
+  # get on the admin machine (or you can run it locally on target machine), where dockerd is running
   $ cd /root
   $ git clone https://github.com/intel/sriov-network-device-plugin
   ```
   
-   ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc)
+   ?? are these docker image pull needed? seems the device plugin ds deployment would pull the images from upstream registry anyways (Bin/Intel is checking, it is likely because an older version of sriov-network-device-plugin was used in Intel's doc). Confirmed, not needed for the docker pull and crictl command.
    
   ```
   $ docker pull nfvpe/sriov-device-plugin
@@ -627,7 +627,7 @@ data:
  # Then you create the configmap (some version of sriov-dp folder structure maybe slightly change, but the configmap and daemonset files are two key files)
   
   $ kubectl create -f deployments/configMap.yaml  
-  $ kubectl create -f deployments/k8s-v1.16/sriovdp-daemonset.yaml  
+  $ kubectl create -f deployments/sriovdp-daemonset.yaml  
   $ kubectl get node <your-k8s-worker-node-name> -o json | jq '.status.allocatable' 
   {
     "cpu": "62",
