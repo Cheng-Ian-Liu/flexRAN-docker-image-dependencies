@@ -126,6 +126,17 @@ sudo apt install linux-image-5.15.0-1033-realtime
 
 # Save changes and run sudo update-grub to apply changes.
 
+# After selecting the right kernel to boot, you can save the change for future boot as follows:
+
+# you can modify the /etc/default/grub file and add the following lines to it:
+
+GRUB_DEFAULT=saved
+GRUB_SAVEDEFAULT=true
+
+# And then update grub with:
+
+sudo update-grub
+
 ```
 
 
