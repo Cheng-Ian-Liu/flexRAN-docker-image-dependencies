@@ -116,7 +116,20 @@ sudo apt install linux-image-realtime
 # update to a specific kernel version
 sudo apt install linux-image-5.15.0-1033-realtime
 
+# some additional info if you have to enable grub menu at boot time to select different kernel to boo
+
+# Menu will appear if you press and hold Shift during loading Grub, if you boot using BIOS. When your system boots using UEFI, press Esc.
+
+# For permanent change you'll need to edit your /etc/default/grub file:
+
+# Place a # symbol at the start of line GRUB_HIDDEN_TIMEOUT=0 to comment it out. If that line doesn't exist, then you can comment out this line  instead: # GRUB_TIMEOUT_STYLE=hidden, and then change GRUB_TIMEOUT=0 to GRUB_TIMEOUT=5, for instance, to give the grub menu a 5 second timeout before it automatically logs you in.
+
+# Save changes and run sudo update-grub to apply changes.
+
 ```
+
+
+
 
 
 ### 3.3.1. RT kernel configuration
