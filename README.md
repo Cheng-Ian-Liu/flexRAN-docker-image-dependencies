@@ -45,6 +45,24 @@ sudo apt install linux-tools-5.15.0-1025-realtime
 sudo apt install linux-cloud-tools-5.15.0-1025-realtime
 ```
 
+Note: below are some usefull command to specify a particular RT kernel version:
+
+```
+# check current kernel in use
+sudo apt update && sudo apt-cache policy linux-image-realtime
+
+# check all available kernel versions
+sudo apt search linux-image | grep realtime/jammy | grep -v unsigned 
+
+# update to the latest RT kernel version
+sudo apt install linux-image-realtime
+
+# update to a specific kernel version
+sudo apt install linux-image-5.15.0-1033-realtime
+
+```
+
+
 ## 2.2. RT kernel configuration
 
 Install TuneD:
