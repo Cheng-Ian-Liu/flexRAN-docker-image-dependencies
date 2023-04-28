@@ -130,7 +130,15 @@ sudo apt install linux-image-5.15.0-1033-realtime
 
 # For permanent change you'll need to edit your /etc/default/grub file:
 
-# Place a # symbol at the start of line GRUB_HIDDEN_TIMEOUT=0 to comment it out. If that line doesn't exist, then you can comment out this line  instead: # GRUB_TIMEOUT_STYLE=hidden, and then change GRUB_TIMEOUT=0 to GRUB_TIMEOUT=5, for instance, to give the grub menu a 5 second timeout before it automatically logs you in.
+# Place a # symbol at the start of line GRUB_HIDDEN_TIMEOUT=0 to comment it out. If that line doesn't exist, then you can comment out this line  instead: # GRUB_TIMEOUT_STYLE=hidden, and then change GRUB_TIMEOUT=0 to GRUB_TIMEOUT=5, for instance, to give the grub menu a 5 second timeout before it automatically logs you in. Example below
+
+#GRUB_DEFAULT=0
+#GRUB_DEFAULT=saved
+#GRUB_SAVEDEFAULT=true
+GRUB_DEFAULT="1>2"
+#GRUB_TIMEOUT_STYLE=hidden
+GRUB_TIMEOUT=5
+
 
 # Save changes and run sudo update-grub to apply changes.
 
