@@ -104,11 +104,19 @@ sudo apt install linux-cloud-tools-5.15.0-1025-realtime
 Note: below are some usefull commands to specify a particular RT kernel version:
 
 ```
-# check current kernel in use
-sudo apt update && sudo apt-cache policy linux-image-realtime
+# enable the RT kernel repo access via Ubuntu Pro, but does not enable RT kernel yet
+pro enable realtime-kernel --access-only
+
+# The above command will only enable the repositories. After that, you can install the specific version you wish with:
+apt install linux-image-5.15.0-1032-realtime
 
 # check all available kernel versions
 sudo apt search linux-image | grep realtime/jammy | grep -v unsigned 
+
+
+# check current kernel in use
+sudo apt update && sudo apt-cache policy linux-image-realtime
+
 
 # update to the latest RT kernel version
 sudo apt install linux-image-realtime
