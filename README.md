@@ -126,16 +126,31 @@ sudo apt install linux-image-5.15.0-1033-realtime
 
 # Save changes and run sudo update-grub to apply changes.
 
-# After selecting the right kernel to boot, you can save the change for future boot as follows:
+# After selecting the right kernel to boot, you can change the default grub entry you want during boot. If you run:
 
-# you can modify the /etc/default/grub file and add the following lines to it:
+sudo awk -F\' '/menuentry / {print $2}' /boot/grub/grub.cfg
 
-GRUB_DEFAULT=saved
-GRUB_SAVEDEFAULT=true
+You'll see all entries:
 
-# And then update grub with:
+"0" Ubuntu
+"1>0" Ubuntu, with Linux 5.15.0-1037-realtime
+"1>1" Ubuntu, with Linux 5.15.0-1037-realtime (recovery mode)
+"1>2" Ubuntu, with Linux 5.15.0-1032-realtime
+"1>3" Ubuntu, with Linux 5.15.0-1032-realtime (recovery mode)
+
+I've added in front of each line the option number for that option. So, in my example, if I want to boot 1032, I'll edit /etc/default/grub and change the option:
+
+sudo nano /etc/default/grub
+
+And change the line with GRUB_DEFAULT to:
+
+GRUB_DEFAULT="1>2"
+
+After that, you need to run:
 
 sudo update-grub
+
+And the next boot will come with that default option selected.
 
 ```
 
