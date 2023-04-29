@@ -110,7 +110,7 @@ pro enable realtime-kernel --access-only
 # The above command will only enable the repositories. After that, you can install the specific version you wish with:
 apt install linux-image-5.15.0-1032-realtime
 
-# also, do not forget to install kernerl header file and other kernel related packages via: (the kernel header file will be particularly needed when you build the ice driver for the new kernel, as we have seen the missing ice driver after kernel ugprade, which requires manual re-build of the ice driver)
+# also, do not forget to install kernerl header file and other kernel related packages via: (the kernel header file will be particularly needed when you need to manually build the ice driver for the new kernel)
 apt install linux-headers-5.15.0-1032-realtime linux-modules-5.15.0-1032-realtime linux-modules-extra-5.15.0-1032-realtime
 
 # check all available kernel versions
