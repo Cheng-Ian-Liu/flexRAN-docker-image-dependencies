@@ -1007,7 +1007,7 @@ $ cd /opt
 $ git clone https://github.com/intel/pf-bb-config.git
 $ cd /opt/pf-bb-config
 $ ./build.sh
-$ ./pf_bb_config ACC100 -c acc100/acc100_config_vf_5g.cfg
+$ ./pf_bb_config ACC100 -c acc100/acc100_config_1vf_5g.cfg
 == pf_bb_config Version v22.07-0-g7843e91 ==
 Tue Dec  6 04:47:52 2022:INFO:Queue Groups: 4 5GUL, 4 5GDL, 0 4GUL, 0 4GDL
 Tue Dec  6 04:47:52 2022:INFO:Configuration in VF mode
