@@ -1,0 +1,30 @@
+export KUBECONFIG=/etc/kubernetes/admin.conf
+ip link set up enp81s0f0
+ip link set up enp81s0f2
+ip link set up enp81s0f3
+echo 8 > /sys/class/net/enp81s0f0/device/sriov_numvfs
+echo 4 > /sys/class/net/enp81s0f2/device/sriov_numvfs
+/home/ec2-user/dpdk-devbind.py -b vfio-pci 51:01.0 51:01.1
+/home/ec2-user/dpdk-devbind.py -b vfio-pci 51:11.0
+
+# ACC100 accelerator config
+modprobe uio
+insmod /opt/dpdk-kmods/linux/igb_uio/igb_uio.ko
+#lspci | grep acc
+#/home/ec2-user/dpdk-devbind.py -s | grep 0d5c
+sleep 1
+/home/ec2-user/dpdk-devbind.py -b igb_uio 0000:18:00.0
+echo 0 > /sys/bus/pci/devices/0000:18:00.0/max_vfs
+sleep 1
+echo 2 > /sys/bus/pci/devices/0000:18:00.0/max_vfs
+#/home/ec2-user/dpdk-devbind.py -s | grep 0d5
+sleep 1
+/home/ec2-user/dpdk-devbind.py -b vfio-pci 0000:19:00.0
+/opt/pf-bb-config/pf_bb_config ACC100 -c /opt/pf-bb-config/acc100/acc100_config_1vf_5g.cfg
+
+kubectl apply -f /home/ec2-user/sriov-network-device-plugin/deployments/configMap.yaml
+
+kubectl delete -f /home/ec2-user/sriov-network-device-plugin/deployments/k8s-v1.16/sriovdp-daemonset.yaml
+sleep 1
+kubectl apply -f /home/ec2-user/sriov-network-device-plugin/deployments/k8s-v1.16/sriovdp-daemonset.yaml
+
