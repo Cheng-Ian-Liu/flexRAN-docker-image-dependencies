@@ -248,6 +248,12 @@ GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt vfio_pci.enable_sriov=1 vfio_pci.dis
 ```
 
 
+Note: in the 5G Anywhere lab system
+
+```shell
+
+```
+
 Note: in the SMC lab system
 
 ```shell
@@ -263,6 +269,15 @@ $ sudo reboot
 ```
 
 Reboot the server, and check the kernel parameter, which should look like:
+
+
+
+Note: in the 5G Anywhere lab system (more parameters due to Intel's latest recommendations)
+
+```shell
+root@eksa-du:/home/ec2-user# cat /proc/cmdline 
+BOOT_IMAGE=/boot/vmlinuz-5.15.0-1032-realtime root=UUID=b18bef28-24eb-4b61-836a-61a75205358f ro intel_iommu=on iommu=pt vfio_pci.enable_sriov=1 vfio_pci.disable_idle_d3=1 usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 skew_tick=1 isolcpus=managed_irq,domain,1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll autoinstall ds=nocloud-net
+```
 
 Note: in the SMC lab system
 
