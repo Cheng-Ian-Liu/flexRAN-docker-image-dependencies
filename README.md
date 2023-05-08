@@ -193,16 +193,35 @@ Add following line to the end of this file
 echo "export tuned_params"
 ```
 
-Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores/64vCores CPU, exclude 0 and 32 as sibiling vCores for house keeping purpose)
+Edit /etc/tuned/realtime-variables.conf to add isolated_cores=1-31, 33-63: (in the case of 32pCores/64vCores CPU, exclude 0 and 32 as sibiling vCores for house keeping purpose), and uncomment isolate_managed_irq=Y
 
 ```shell
 isolated_cores=1-31,33-63
+...
+isolated_managed_irq=Y
+
 ```
 
 Edit /usr/lib/tuned/realtime/tuned.conf to add nohz and rcu related parameters:
 
 ```shell
+[bootloader]
 cmdline_realtime=+isolcpus=${managed_irq}${isolated_cores} intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=${isolated_cores} rcu_nocbs=${isolated_cores} rcu_nocb_poll
+
+[irqbalance]
+banned_cpus=${isolated_cores}
+
+[script]
+script = ${i:PROFILE_DIR}/script.sh
+
+[scheduler]
+isolated_cores=${isolated_cores}
+
+[rtentsk]
+
+#Enable C6 State
+[cpu]
+force_latency=-1
 ```
 
 Activate Real-Time Profile:
@@ -215,7 +234,7 @@ Check tuned_params:
 
 ```shell
 $ grep tuned_params= /boot/grub/grub.cfg
-set tuned_params="skew_tick=1 isolcpus=1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll"
+set tuned_params="skew_tick=1 isolcpus=managed_irq,domain,1-31,33-63 intel_pstate=disable nosoftlockup tsc=nowatchdog nohz=on nohz_full=1-31,33-63 rcu_nocbs=1-31,33-63 rcu_nocb_poll"
 ```
 
 The other parameters of this set of best known configuration can be simply added in /etc/default/grub as below:
