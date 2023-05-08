@@ -239,6 +239,13 @@ set tuned_params="skew_tick=1 isolcpus=managed_irq,domain,1-31,33-63 intel_pstat
 
 The other parameters of this set of best known configuration can be simply added in /etc/default/grub as below:
 
+Note: in the 5G Anywhere lab system (XR-11), added vfio related config as per Intel's latest Dec. 2022 doc recommendation
+
+```shell
+GRUB_CMDLINE_LINUX="intel_iommu=on iommu=pt vfio_pci.enable_sriov=1 vfio_pci.disable_idle_d3=1 usbcore.autosuspend=-1 selinux=0 enforcing=0 nmi_watchdog=0 crashkernel=auto softlockup_panic=0 audit=0 mce=off hugepagesz=1G hugepages=32 hugepagesz=2M hugepages=0 default_hugepagesz=1G kthread_cpus=0,32 irqaffinity=0,32 "
+```
+
+
 Note: in the SMC lab system
 
 ```shell
