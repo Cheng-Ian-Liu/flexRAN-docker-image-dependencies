@@ -292,17 +292,9 @@ $ cpupower frequency-set -g performance
 Set cpu core frequency to 2.5GHz (confirmed with Intel that 2.5GHz is okey for Intel(R) Xeon(R) Gold 6338N CPU @ 2.20GHz CPU)
 
 ```shell
-$ wrmsr -a 0x199 0x1900
+cpupower frequency-set -u 2500000
 ```
 
-
-Set cpu uncore (i.e. 0x620) to fixed – maximum allowed. Disable c6 and c1e
-
-```shell
-$ wrmsr -a 0x620 0x1e1e
-$ cpupower idle-set -d 3
-$ cpupower idle-set -d 2
-```
 
 ### 3.3.3. Kubernetes installation
 
