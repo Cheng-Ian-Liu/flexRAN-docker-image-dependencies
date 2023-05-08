@@ -202,7 +202,9 @@ isolated_managed_irq=Y
 
 ```
 
-Edit /usr/lib/tuned/realtime/tuned.conf to add nohz and rcu related parameters:
+Edit /usr/lib/tuned/realtime/tuned.conf to add nohz and rcu related parameters under the [bootloader] section, and also add the [cpu] section for enabling C6 state per Intel's latest Dec. 2022 doc recommendation
+
+
 
 ```shell
 [bootloader]
