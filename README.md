@@ -64,6 +64,21 @@ NIC driver and firmware are updated according to Intel's recommendation: Intel F
 ICE Driver Version: 1.8.8. (NOTE: do the driver update/install after RT kernel enablement, since it is kernel dependent)
 https://www.intel.com/content/www/us/en/download/19630/729615/intel-network-adapter-driver-for-e810-series-devices-under-linux.html
 
+Note: NIC driver and firmware update would cause loss of connection, therefore, need to perform from BMC console
+Also, the ice driver and firmware update requires a server reboot to resume the networking
+
+```
+#from the console:
+modinfo ice
+cd PROCGB/Linux/ice-1.8.8
+make install
+modinfo ice
+rmmod irdma
+rmmod ice
+modprobe ice
+ethtool -i <NIC_name>
+```
+
 NVM Firmware Version: 3.20
 https://www.intel.com/content/www/us/en/download/19626/727313/non-volatile-memory-nvm-update-utility-for-intel-ethernet-network-adapters-e810-series-linux.html
 
