@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # set -x
+
+echo "SR-IOV configuration"
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ip link set up enp81s0f0
 ip link set up enp81s0f2
@@ -11,6 +13,7 @@ echo 4 > /sys/class/net/enp81s0f2/device/sriov_numvfs
 /home/ec2-user/dpdk-devbind.py -b vfio-pci 51:11.0
 
 # ACC100 accelerator config
+echo "ACC100 configuration"
 modprobe uio
 insmod /opt/dpdk-kmods/linux/igb_uio/igb_uio.ko
 #lspci | grep acc
@@ -25,6 +28,8 @@ sleep 1
 /home/ec2-user/dpdk-devbind.py -b vfio-pci 0000:19:00.0
 /opt/pf-bb-config/pf_bb_config ACC100 -c /opt/pf-bb-config/acc100/acc100_config_1vf_5g.cfg
 
+# SR-IOV device plugin configuration
+echo "SR-IOV device plugin configuration"
 kubectl apply -f /home/ec2-user/sriov-network-device-plugin/deployments/configMap.yaml
 
 kubectl delete -f /home/ec2-user/sriov-network-device-plugin/deployments/k8s-v1.16/sriovdp-daemonset.yaml
