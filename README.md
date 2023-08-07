@@ -95,7 +95,7 @@ To attach your personal machine to a Pro subscription, please run:
 pro attach <free token> 
 ```
 
-To enable the real-time beta kernel, run:
+To enable the real-time beta kernel, run: (note: stop here and refer to the "specify a particular RT kernel version" section below, if you need a specific version of RT kernel. Otherwise, it would enable the latest RT kernel version automatically)
 
 ```
 pro enable realtime-kernel
