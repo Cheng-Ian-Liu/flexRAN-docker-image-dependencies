@@ -558,7 +558,7 @@ net1      Link encap:Ethernet  HWaddr 12:A8:12:95:F6:A4
   
   Then you can use the usertools that comes with DPDK package to check device drivers in use, and bind VF drivers
   
-  Check current devices and drivers:
+  Check current devices and drivers: (Notice that your driver type may vary depending on the type of NIC in your system)
 
   ```
   root@eksa-du:/opt/dpdk-21.11/usertools# dpdk-devbind.py -s
