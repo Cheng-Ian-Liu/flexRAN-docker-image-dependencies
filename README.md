@@ -136,11 +136,9 @@ sudo apt search linux-image | grep realtime/jammy | grep -v unsigned
 sudo apt update && sudo apt-cache policy linux-image-realtime
 
 
-# update to the latest RT kernel version
+# (Optional) update to the latest RT kernel version
 sudo apt install linux-image-realtime
 
-# update to a specific kernel version
-sudo apt install linux-image-5.15.0-1033-realtime
 
 # some additional info if you have to enable grub menu at boot time to select different kernel to boo
 
