@@ -1075,8 +1075,8 @@ $ /opt/dpdk-21.11/usertools/dpdk-devbind.py -b vfio-pci 0000:4b:0a.2 0000:4b:0a.
 Note: need to re-apply the sriov-dp configmap.yaml (if you have not updated the acc100 VF's device ID in the configmap), also the sriov-dp daemonset needs to be deleted and re-created in order for K8s to pick it up and show it in the resource.
 
 ```
-kubectl delete -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
-kubectl apply -f deployments/k8s-v1.16/sriovdp-daemonset.yaml
+kubectl delete -f deployments/sriovdp-daemonset.yaml
+kubectl apply -f deployments/sriovdp-daemonset.yaml
 ```
 
 Now you should be able to see all the K8s resources allocatable (e.g. SRIOV DPDK, non-DPDK/net-device, Accelerator, HugePage Mem, etc.)
